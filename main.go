@@ -17,7 +17,7 @@ type Users struct {
 }
 
 func main() {
-	fmt.Println("Program Running...")
+	fmt.Println("System Running...")
 	API()
 }
 
