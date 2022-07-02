@@ -45,27 +45,30 @@ func getData(w http.ResponseWriter, r *http.Request) {
 	var users []Users
 	var user Users
 
-	insert, err := conn.Query("select * from user_data")
+	id := r.URL.Query().Get("id")
+	if len(id) > 0 {
+		err := conn.QueryRow("SELECT * FROM user_data where id = ?", id).Scan(&user.ID, &user.Name, &user.Pass)
+		if err != nil {
+			w.WriteHeader(404)
+			fmt.Fprintf(w, "User Not Found!!")
+			return
+		}
+		json.Marshal(user)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(user)
+		return
+	}
+
+	getAll, err := conn.Query("select * from user_data")
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "Failed to Fetch!!")
 	}
-	for insert.Next() {
-		insert.Scan(&user.ID, &user.Name, &user.Pass)
+	for getAll.Next() {
+		getAll.Scan(&user.ID, &user.Name, &user.Pass)
 		users = append(users, user)
 	}
-	var count int = 0
-	id := r.URL.Query().Get("id")
-	if len(id) > 0 {
-		for _, v := range users {
-			if v.ID == id {
-				w.Header().Set("Content-Type", "application/json")
-				json.NewEncoder(w).Encode(users[count])
-				return
-			}
-			count++
-		}
-	}
+
 	json.Marshal(users)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
@@ -73,29 +76,19 @@ func getData(w http.ResponseWriter, r *http.Request) {
 }
 
 func postData(w http.ResponseWriter, r *http.Request) {
-	var users []Users
-	var user Users
 	var add Users
 
-	get, err := conn.Query("select * from user_data")
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Failed to Insert!!")
-	}
-	for get.Next() {
-		get.Scan(&user.ID, &user.Name, &user.Pass)
-		users = append(users, user)
-	}
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
-	for _, v := range users {
-		if v.ID == dataToCompare["id"] {
-			w.WriteHeader(409)
-			fmt.Fprintf(w, "ID already in use!!")
-			return
-		}
+	var duplicate string
+	conn.QueryRow("Select name from user_data where id = ?", dataToCompare["id"]).Scan(&duplicate)
+	if duplicate != "" {
+		w.WriteHeader(409)
+		fmt.Fprintf(w, "ID already in use!!")
+		return
 	}
+
 	add.ID = dataToCompare["id"]
 	add.Name = dataToCompare["name"]
 	add.Pass = dataToCompare["pass"]
