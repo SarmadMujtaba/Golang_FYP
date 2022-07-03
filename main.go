@@ -14,9 +14,9 @@ import (
 )
 
 type Users struct {
-	Name string `json:"name" validate:"alpha"`
-	ID   string `json:"id" validate:"numeric"`
-	Pass string `json:"pass" validate:"alphanum"`
+	Name  string `json:"name" validate:"alpha"`
+	Email string `json:"email" validate:"email"`
+	Pass  string `json:"pass" validate:"alphanum"`
 }
 
 var conn *sql.DB
@@ -47,8 +47,8 @@ func getData(w http.ResponseWriter, r *http.Request) {
 	var user Users
 	var add Users
 
-	add.ID = r.URL.Query().Get("id")
-	if len(add.ID) > 0 {
+	add.Email = r.URL.Query().Get("email")
+	if len(add.Email) > 0 {
 		add.Name = "test"
 		add.Pass = "test"
 		validate := validator.New()
@@ -59,7 +59,7 @@ func getData(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err2 := conn.QueryRow("SELECT * FROM user_data where id = ?", add.ID).Scan(&user.ID, &user.Name, &user.Pass)
+		err2 := conn.QueryRow("SELECT * FROM user_data where email = ?", add.Email).Scan(&user.Email, &user.Name, &user.Pass)
 		if err2 != nil {
 			w.WriteHeader(404)
 			fmt.Fprintf(w, "User Not Found!!")
@@ -77,7 +77,7 @@ func getData(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Failed to Fetch!!")
 	}
 	for getAll.Next() {
-		getAll.Scan(&user.ID, &user.Name, &user.Pass)
+		getAll.Scan(&user.Email, &user.Name, &user.Pass)
 		users = append(users, user)
 	}
 
@@ -100,7 +100,7 @@ func postData(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	add.ID = dataToCompare["id"]
+	add.Email = dataToCompare["email"]
 	add.Name = dataToCompare["name"]
 	add.Pass = dataToCompare["pass"]
 
@@ -114,14 +114,14 @@ func postData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var duplicate string
-	conn.QueryRow("Select name from user_data where id = ?", dataToCompare["id"]).Scan(&duplicate)
+	conn.QueryRow("Select name from user_data where email = ?", add.Email).Scan(&duplicate)
 	if duplicate != "" {
 		w.WriteHeader(409)
-		fmt.Fprintf(w, "ID already in use!!")
+		fmt.Fprintf(w, "Email ID already exist!!")
 		return
 	}
 
-	conn.Query("insert into user_data values(?, ?, ?)", add.ID, add.Name, add.Pass)
+	conn.Query("insert into user_data values(?, ?, ?)", add.Email, add.Name, add.Pass)
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "User inserted!!")
 	return
