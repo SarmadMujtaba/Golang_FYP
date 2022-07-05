@@ -37,7 +37,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	fmt.Println("Connection Established ...")
+	fmt.Println("Connection Established...")
 	API()
 }
 
