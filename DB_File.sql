@@ -18,7 +18,9 @@ create table organizations(
 org_id varchar (40) primary key,
 name varchar (40),
 about varchar (200),
-website varchar (30)
+website varchar (30),
+u_id varchar(40),
+FOREIGN KEY (u_id) REFERENCES user_data(id)
 )
 
 select * from organizations;
