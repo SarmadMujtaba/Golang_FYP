@@ -168,10 +168,10 @@ func deleteUsers(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "User does not exist!!")
 		return
 	}
-	var org string
-	conn.QueryRow("select org_id from membership where id = ?", check.ID).Scan(&org)
+	var u_id string
+	conn.QueryRow("select id from membership where id = ?", check.ID).Scan(&u_id)
 	conn.Query("DELETE from membership where id = ?", check.ID)
-	conn.Query("DELETE from organizations where org_id = ?", org)
+	conn.Query("DELETE from organizations where u_id = ?", u_id)
 	conn.Query("DELETE from user_data where id = ?", check.ID)
 	w.WriteHeader(200)
 	fmt.Fprintf(w, "Record deleted successfully!!")
@@ -209,7 +209,7 @@ func postOrganizations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, er := conn.Query("insert into organizations values(?, ?, ?, ?)", add.Org_ID, add.Name, add.About, add.Website)
+	_, er := conn.Query("insert into organizations values(?, ?, ?, ?, ?)", add.Org_ID, add.Name, add.About, add.Website, add.U_ID)
 	if er != nil {
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
@@ -249,9 +249,8 @@ func getOrganizations(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err2 := conn.QueryRow("SELECT org_id, name, about, website FROM organizations where org_id = ?", add.Org_ID).Scan(&organization.Org_ID, &organization.Name, &organization.About, &organization.Website)
-		err3 := conn.QueryRow("select id from membership where org_id = ?", add.Org_ID).Scan(&organization.U_ID)
-		if err2 != nil || err3 != nil {
+		err2 := conn.QueryRow("SELECT org_id, name, about, website, u_id FROM organizations where org_id = ?", add.Org_ID).Scan(&organization.Org_ID, &organization.Name, &organization.About, &organization.Website, &organization.U_ID)
+		if err2 != nil {
 			w.WriteHeader(404)
 			fmt.Fprintf(w, "Organization Not Found!!")
 			return
@@ -269,8 +268,7 @@ func getOrganizations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for getAll.Next() {
-		getAll.Scan(&organization.Org_ID, &organization.Name, &organization.About, &organization.Website)
-		conn.QueryRow("select id from membership where org_id = ?", organization.Org_ID).Scan(&organization.U_ID)
+		getAll.Scan(&organization.Org_ID, &organization.Name, &organization.About, &organization.Website, &organization.U_ID)
 		organizations = append(organizations, organization)
 	}
 
