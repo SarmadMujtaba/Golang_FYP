@@ -109,12 +109,6 @@ func postUsers(w http.ResponseWriter, r *http.Request) {
 	var add Users
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
-	ok := json.Valid(dataFromWeb)
-	if !ok {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Syntax!!")
-		return
-	}
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
@@ -150,16 +144,44 @@ func postUsers(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func deleteUsers(w http.ResponseWriter, r *http.Request) {
+	var check Users
+	check.ID = r.URL.Query().Get("id")
+	if len(check.ID) > 0 {
+		// populating add for validation
+		check.Name = "dummy"
+		check.Email = "dummy@gmail.com"
+		check.Pass = "dummy"
+		validate := validator.New()
+		err := validate.Struct(check)
+		if err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Incorrect input!!")
+			return
+		}
+	}
+
+	var find string
+	conn.QueryRow("Select name from user_data where id = ?", check.ID).Scan(&find)
+	if find == "" {
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "User does not exist!!")
+		return
+	}
+	var org string
+	conn.QueryRow("select org_id from membership where id = ?", check.ID).Scan(&org)
+	conn.Query("DELETE from membership where id = ?", check.ID)
+	conn.Query("DELETE from organizations where org_id = ?", org)
+	conn.Query("DELETE from user_data where id = ?", check.ID)
+	w.WriteHeader(200)
+	fmt.Fprintf(w, "Record deleted successfully!!")
+	return
+}
+
 func postOrganizations(w http.ResponseWriter, r *http.Request) {
 	var add Organizations
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
-	ok := json.Valid(dataFromWeb)
-	if !ok {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Syntax!!")
-		return
-	}
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
@@ -264,11 +286,45 @@ func getOrganizations(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func deleteOrganizations(w http.ResponseWriter, r *http.Request) {
+	var check Organizations
+	check.Org_ID = r.URL.Query().Get("id")
+	if len(check.Org_ID) > 0 {
+		// populating add for validation
+		check.U_ID = "73c6ba9b-9325-4c68-bacb-52b6ce04e919"
+		check.Name = "dummy"
+		check.About = "dummy"
+		check.Website = "https://pkg.go.dev/github.com"
+		validate := validator.New()
+		err := validate.Struct(check)
+		if err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Incorrect input!!")
+			return
+		}
+	}
+
+	var find string
+	conn.QueryRow("Select name from organizations where org_id = ?", check.Org_ID).Scan(&find)
+	if find == "" {
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "Organization does not exist!!")
+		return
+	}
+	conn.Query("DELETE from membership where org_id = ?", check.Org_ID)
+	conn.Query("DELETE from organizations where org_id = ?", check.Org_ID)
+	w.WriteHeader(200)
+	fmt.Fprintf(w, "Record deleted successfully!!")
+	return
+}
+
 func Handler() {
 	route := mux.NewRouter()
-	route.HandleFunc("/users", getUsers).Methods("GET")
-	route.HandleFunc("/users", postUsers).Methods("POST")
-	route.HandleFunc("/organizations", getOrganizations).Methods("GET")
-	route.HandleFunc("/organizations", postOrganizations).Methods("POST")
-	log.Fatal(http.ListenAndServe(":5010", route))
+	route.HandleFunc("/users", getUsers).Methods(http.MethodGet)
+	route.HandleFunc("/users", postUsers).Methods(http.MethodPost)
+	route.HandleFunc("/users", deleteUsers).Methods(http.MethodDelete)
+	route.HandleFunc("/organizations", getOrganizations).Methods(http.MethodGet)
+	route.HandleFunc("/organizations", postOrganizations).Methods(http.MethodPost)
+	route.HandleFunc("/organizations", deleteOrganizations).Methods(http.MethodDelete)
+	log.Fatal(http.ListenAndServe(":5020", route))
 }
