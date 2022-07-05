@@ -24,6 +24,5 @@ func Handler() {
 	route.HandleFunc("/organizations", organizations.GetOrganizations).Methods(http.MethodGet)
 	route.HandleFunc("/organizations", organizations.PostOrganizations).Methods(http.MethodPost)
 	route.HandleFunc("/organizations", organizations.DeleteOrganizations).Methods(http.MethodDelete)
-	route.HandleFunc("/organizations/owns", organizations.OrganizationsOfUser).Methods(http.MethodGet)
 	log.Fatal(http.ListenAndServe(":5020", route))
 }

@@ -29,10 +29,29 @@ func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 
 		err2 := db.Conn.QueryRow("SELECT org_id, name, about, website, u_id FROM organizations where org_id = ?", add.Org_ID).Scan(&organization.Org_ID, &organization.Name, &organization.About, &organization.Website, &organization.U_ID)
 		if err2 != nil {
-			w.WriteHeader(404)
-			fmt.Fprintf(w, "Organization Not Found!!")
+			data, err3 := db.Conn.Query("select * from organizations where u_id = ?", add.Org_ID)
+			if err3 != nil {
+				w.WriteHeader(400)
+				fmt.Fprintf(w, "No organizations found!!")
+				return
+			}
+			for data.Next() {
+				data.Scan(&organization.Org_ID, &organization.Name, &organization.About, &organization.Website, &organization.U_ID)
+				organizations = append(organizations, organization)
+			}
+
+			if len(organizations) == 0 {
+				w.WriteHeader(404)
+				fmt.Fprintf(w, "Nothing to return!!")
+				return
+			}
+
+			json.Marshal(organizations)
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(organizations)
 			return
 		}
+
 		json.Marshal(organization)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(organization)
