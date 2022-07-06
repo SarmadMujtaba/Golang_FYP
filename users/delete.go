@@ -12,6 +12,7 @@ import (
 
 func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	var check structures.Users
+	var organizations []structures.Organizations
 	var users []structures.Users
 	test := true
 
@@ -27,6 +28,14 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "Incorrect input!!")
 			return
+		}
+	}
+
+	db.Conn.Find(&organizations)
+	for _, orgs := range organizations {
+		if orgs.U_ID == check.ID {
+			db.Conn.Where("U_ID = ?", check.ID).Delete(&organizations)
+			test = false
 		}
 	}
 
