@@ -2,6 +2,7 @@ package users
 
 import (
 	"PostJson/db"
+	"PostJson/structures"
 	"fmt"
 	"net/http"
 
@@ -10,7 +11,10 @@ import (
 )
 
 func DeleteUsers(w http.ResponseWriter, r *http.Request) {
-	var check Users
+	var check structures.Users
+	var users []structures.Users
+	test := true
+
 	check.ID = r.URL.Query().Get("id")
 	if len(check.ID) > 0 {
 		// populating add for validation
@@ -26,19 +30,20 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var find string
-	db.Conn.QueryRow("Select name from user_data where id = ?", check.ID).Scan(&find)
-	if find == "" {
+	db.Conn.Find(&users)
+
+	for _, usr := range users {
+		if usr.ID == check.ID {
+			db.Conn.Where("ID = ?", check.ID).Delete(&users)
+			w.WriteHeader(200)
+			fmt.Fprintf(w, "User deteled successfully!!")
+			test = false
+		}
+	}
+	if test == true {
 		w.WriteHeader(404)
 		fmt.Fprintf(w, "User does not exist!!")
 		return
 	}
-	var u_id string
-	db.Conn.QueryRow("select id from membership where id = ?", check.ID).Scan(&u_id)
-	db.Conn.Query("DELETE from membership where id = ?", check.ID)
-	db.Conn.Query("DELETE from organizations where u_id = ?", u_id)
-	db.Conn.Query("DELETE from user_data where id = ?", check.ID)
-	w.WriteHeader(200)
-	fmt.Fprintf(w, "Record deleted successfully!!")
-	return
+
 }

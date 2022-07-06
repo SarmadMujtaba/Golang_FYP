@@ -2,6 +2,7 @@ package users
 
 import (
 	"PostJson/db"
+	"PostJson/structures"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,9 +12,9 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	var users []Users
-	var user Users
-	var add Users
+	var users []structures.Users
+	var add structures.Users
+	var test bool = true
 
 	add.ID = r.URL.Query().Get("id")
 	if len(add.ID) > 0 {
@@ -29,28 +30,25 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err2 := db.Conn.QueryRow("SELECT * FROM user_data where id = ?", add.ID).Scan(&user.ID, &user.Email, &user.Name, &user.Pass)
-		if err2 != nil {
+		db.Conn.Find(&users)
+		for _, usr := range users {
+			if usr.ID == add.ID {
+				json.Marshal(usr)
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(usr)
+				test = false
+				return
+			}
+		}
+		if test == true {
 			w.WriteHeader(404)
 			fmt.Fprintf(w, "User Not Found!!")
 			return
 		}
-		json.Marshal(user)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(user)
-		return
 	}
 
-	getAll, err := db.Conn.Query("select * from user_data")
-	if err != nil {
-		w.WriteHeader(404)
-		fmt.Fprintf(w, "Failed to Fetch!!")
-		return
-	}
-	for getAll.Next() {
-		getAll.Scan(&user.ID, &user.Email, &user.Name, &user.Pass)
-		users = append(users, user)
-	}
+	db.Conn.Find(&users)
+
 	if len(users) == 0 {
 		w.WriteHeader(404)
 		fmt.Fprintf(w, "Nothing to return!!")

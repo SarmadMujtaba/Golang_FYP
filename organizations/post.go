@@ -2,6 +2,7 @@ package organizations
 
 import (
 	"PostJson/db"
+	"PostJson/structures"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,19 +10,10 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
-	"gopkg.in/go-playground/validator.v9"
 )
 
-type Organizations struct {
-	U_ID    string `json:"user_id" validate:"uuid"`
-	Org_ID  string `json:"id" validate:"uuid"`
-	Name    string `json:"name"`
-	About   string `json:"about"`
-	Website string `json:"website"`
-}
-
 func PostOrganizations(w http.ResponseWriter, r *http.Request) {
-	var add Organizations
+	var add structures.Organizations
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
@@ -34,29 +26,21 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	add.About = dataToCompare["about"]
 	add.Website = dataToCompare["website"]
 
-	// input validation
-	validate := validator.New()
-	err := validate.Struct(add)
-	if err != nil {
+	result := db.Conn.Create(&add) //Query("insert into organizations values(?, ?, ?, ?, ?)", add.Org_ID, add.Name, add.About, add.Website, add.U_ID)
+	if result.Error != nil {
 		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect input!!")
-		return
-	}
-
-	_, er := db.Conn.Query("insert into organizations values(?, ?, ?, ?, ?)", add.Org_ID, add.Name, add.About, add.Website, add.U_ID)
-	if er != nil {
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
 	}
 
-	id = uuid.New()
-	_, err = db.Conn.Query("insert into membership values(?, ?, ?)", id.String(), add.U_ID, add.Org_ID)
-	if err != nil {
-		w.WriteHeader(400)
-		db.Conn.Query("delete from organizations where org_id = ?", add.Org_ID)
-		fmt.Fprintln(w, "Could not enter record!!")
-		return
-	}
+	// id = uuid.New()
+	// _, err = db.Conn.Query("insert into membership values(?, ?, ?)", id.String(), add.U_ID, add.Org_ID)
+	// if err != nil {
+	// 	w.WriteHeader(400)
+	// 	db.Conn.Query("delete from organizations where org_id = ?", add.Org_ID)
+	// 	fmt.Fprintln(w, "Could not enter record!!")
+	// 	return
+	// }
 
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "Organization Created!!")

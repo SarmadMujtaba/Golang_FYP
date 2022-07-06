@@ -2,6 +2,7 @@ package users
 
 import (
 	"PostJson/db"
+	"PostJson/structures"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -12,15 +13,9 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-type Users struct {
-	ID    string `json:"id" validate:"uuid"`
-	Name  string `json:"name" validate:"alpha"`
-	Email string `json:"email" validate:"email"`
-	Pass  string `json:"pass" validate:"alphanum"`
-}
-
 func PostUsers(w http.ResponseWriter, r *http.Request) {
-	var add Users
+	var add structures.Users
+	allUsers := []structures.Users{}
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
@@ -41,18 +36,16 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var duplicate string
-	db.Conn.QueryRow("Select name from user_data where email = ?", add.Email).Scan(&duplicate)
-	if duplicate != "" {
-		w.WriteHeader(409)
-		fmt.Fprintf(w, "Email ID already exist!!")
-		return
+	db.Conn.Find(&allUsers)
+	for _, usr := range allUsers {
+		if usr.Email == add.Email {
+			w.WriteHeader(409)
+			fmt.Fprintf(w, "Email ID already exist!!")
+			return
+		}
 	}
 
-	_, err = db.Conn.Query("insert into user_data values(?, ?, ?, ?)", add.ID, add.Email, add.Name, add.Pass)
-	if err != nil {
-		panic(err)
-	}
+	db.Conn.Create(&add)
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "User inserted!!")
 	return
