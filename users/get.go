@@ -42,7 +42,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		}
 		if test == true {
 			w.WriteHeader(404)
-			fmt.Fprintf(w, "User Not Found!!")
+			fmt.Fprintf(w, "This user ID does not exist!!")
 			return
 		}
 	}

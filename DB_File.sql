@@ -38,7 +38,7 @@ FOREIGN KEY (id) REFERENCES users(id),
 FOREIGN KEY (org_id) REFERENCES organizations(org_id)
 )
 
-select * from membership;
+select * from memberships;
 
 
 

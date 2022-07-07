@@ -14,6 +14,8 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	var check structures.Users
 	var organizations []structures.Organizations
 	var users []structures.Users
+	var members []structures.Memberships
+
 	test := true
 
 	check.ID = r.URL.Query().Get("id")
@@ -28,6 +30,14 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "Incorrect input!!")
 			return
+		}
+	}
+
+	db.Conn.Find(&members)
+	for _, member := range members {
+		if member.U_ID == check.ID {
+			db.Conn.Where("U_ID = ?", check.ID).Delete(&members)
+			test = false
 		}
 	}
 
@@ -50,7 +60,7 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if test == true {
-		w.WriteHeader(404)
+		w.WriteHeader(400)
 		fmt.Fprintf(w, "User does not exist!!")
 		return
 	}

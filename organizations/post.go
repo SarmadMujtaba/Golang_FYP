@@ -10,10 +10,14 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	var add structures.Organizations
+	var users []structures.Users
+	var member structures.Memberships
+	test := true
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
@@ -26,21 +30,44 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	add.About = dataToCompare["about"]
 	add.Website = dataToCompare["website"]
 
-	result := db.Conn.Create(&add) //Query("insert into organizations values(?, ?, ?, ?, ?)", add.Org_ID, add.Name, add.About, add.Website, add.U_ID)
+	validate := validator.New()
+	err := validate.Struct(add)
+	if err != nil {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, "Incorrect input!!")
+		return
+	}
+
+	db.Conn.Find(&users)
+	for _, usr := range users {
+		if usr.ID == add.U_ID {
+			test = false
+		}
+	}
+
+	if test == true {
+		w.WriteHeader(400)
+		fmt.Fprintln(w, "Could not enter record!!")
+		return
+	}
+
+	result := db.Conn.Create(&add)
 	if result.Error != nil {
 		w.WriteHeader(400)
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
 	}
 
-	// id = uuid.New()
-	// _, err = db.Conn.Query("insert into membership values(?, ?, ?)", id.String(), add.U_ID, add.Org_ID)
-	// if err != nil {
-	// 	w.WriteHeader(400)
-	// 	db.Conn.Query("delete from organizations where org_id = ?", add.Org_ID)
-	// 	fmt.Fprintln(w, "Could not enter record!!")
-	// 	return
-	// }
+	id = uuid.New()
+	member.ID = id.String()
+	member.Org_ID = add.Org_ID
+	member.U_ID = add.U_ID
+	result = db.Conn.Create(&member)
+	if result.Error != nil {
+		w.WriteHeader(400)
+		fmt.Fprintln(w, "Could not enter record!!")
+		return
+	}
 
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "Organization Created!!")

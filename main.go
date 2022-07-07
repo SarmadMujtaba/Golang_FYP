@@ -14,7 +14,7 @@ import (
 
 func main() {
 	db.Connection()
-	db.Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{})
+	db.Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	Handler()
 }
 

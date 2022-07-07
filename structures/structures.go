@@ -13,5 +13,12 @@ type Organizations struct {
 	About   string `json:"about"`
 	Website string `json:"website"`
 	U_ID    string `json:"user_id" validate:"uuid"`
-	Users   Users  `gorm:"foreignKey:U_ID;references:ID"`
+}
+
+type Memberships struct {
+	ID            string        `json:"pk" gorm:"primaryKey;autoIncrement:false"`
+	U_ID          string        `json:"id"`
+	Org_ID        string        `json:"org_id"`
+	Users         Users         `gorm:"foreignKey:U_ID;references:ID"`
+	Organizations Organizations `gorm:"foreignKey:Org_ID;references:Org_ID"`
 }
