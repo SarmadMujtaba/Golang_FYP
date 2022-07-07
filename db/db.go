@@ -3,6 +3,8 @@ package db
 import (
 	"fmt"
 
+	"PostJson/structures"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -23,6 +25,10 @@ func Connection() {
 	if err != nil {
 		panic(err)
 	}
+	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
+
+	Conn.Model(&structures.Memberships{}).AddForeignKey("u_id", "users(id)", "RESTRICT", "RESTRICT")
+	Conn.Model(&structures.Memberships{}).AddForeignKey("org_id", "organizations(org_id)", "RESTRICT", "RESTRICT")
 
 	fmt.Println("Connection Established...")
 

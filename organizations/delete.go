@@ -34,8 +34,8 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	db.Conn.Find(&organizations)
 	for _, usr := range organizations {
 		if usr.Org_ID == check.Org_ID {
-			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&organizations)
 			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&members)
+			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&organizations)
 			w.WriteHeader(200)
 			fmt.Fprintf(w, "Organization deteled successfully!!")
 			test = false

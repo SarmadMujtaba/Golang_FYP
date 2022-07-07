@@ -40,7 +40,7 @@ FOREIGN KEY (org_id) REFERENCES organizations(org_id)
 
 select * from memberships;
 
-
+insert into memberships values("a", "b", "c");
 
 
 
