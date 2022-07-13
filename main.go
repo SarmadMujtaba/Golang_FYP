@@ -2,6 +2,7 @@ package main
 
 import (
 	"PostJson/db"
+	"PostJson/members"
 	"PostJson/organizations"
 	"PostJson/structures"
 	"PostJson/users"
@@ -26,5 +27,6 @@ func Handler() {
 	route.HandleFunc("/organizations", organizations.GetOrganizations).Methods(http.MethodGet)
 	route.HandleFunc("/organizations", organizations.PostOrganizations).Methods(http.MethodPost)
 	route.HandleFunc("/organizations", organizations.DeleteOrganizations).Methods(http.MethodDelete)
+	route.HandleFunc("/members", members.GetMembers).Methods(http.MethodGet)
 	log.Fatal(http.ListenAndServe(":5020", route))
 }

@@ -15,7 +15,7 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	var organizations []structures.Organizations
 	var members []structures.Memberships
 
-	test := true
+	wrongInput := true
 
 	check.Org_ID = r.URL.Query().Get("id")
 	if len(check.Org_ID) > 0 {
@@ -38,11 +38,11 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&organizations)
 			w.WriteHeader(200)
 			fmt.Fprintf(w, "Organization deteled successfully!!")
-			test = false
+			wrongInput = false
 		}
 	}
 
-	if test == true {
+	if wrongInput == true {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Organization does not exist!!")
 		return

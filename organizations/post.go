@@ -17,7 +17,7 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	var add structures.Organizations
 	var users []structures.Users
 	var member structures.Memberships
-	test := true
+	duplicate := true
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
@@ -41,11 +41,11 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	db.Conn.Find(&users)
 	for _, usr := range users {
 		if usr.ID == add.U_ID {
-			test = false
+			duplicate = false
 		}
 	}
 
-	if test == true {
+	if duplicate == true {
 		w.WriteHeader(400)
 		fmt.Fprintln(w, "Could not enter record!!")
 		return

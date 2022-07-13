@@ -14,7 +14,7 @@ import (
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	var users []structures.Users
 	var add structures.Users
-	var test bool = true
+	var wrongInput bool = true
 
 	add.ID = r.URL.Query().Get("id")
 	if len(add.ID) > 0 {
@@ -36,11 +36,11 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 				json.Marshal(usr)
 				w.Header().Set("Content-Type", "application/json")
 				json.NewEncoder(w).Encode(usr)
-				test = false
+				wrongInput = false
 				return
 			}
 		}
-		if test == true {
+		if wrongInput == true {
 			w.WriteHeader(404)
 			fmt.Fprintf(w, "This user ID does not exist!!")
 			return

@@ -16,7 +16,7 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	var users []structures.Users
 	var members []structures.Memberships
 
-	test := true
+	wrongInput := true
 
 	check.ID = r.URL.Query().Get("id")
 	if len(check.ID) > 0 {
@@ -37,7 +37,7 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	for _, member := range members {
 		if member.U_ID == check.ID {
 			db.Conn.Where("U_ID = ?", check.ID).Delete(&members)
-			test = false
+			wrongInput = false
 		}
 	}
 
@@ -45,7 +45,7 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	for _, orgs := range organizations {
 		if orgs.U_ID == check.ID {
 			db.Conn.Where("U_ID = ?", check.ID).Delete(&organizations)
-			test = false
+			wrongInput = false
 		}
 	}
 
@@ -56,10 +56,10 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 			db.Conn.Where("ID = ?", check.ID).Delete(&users)
 			w.WriteHeader(200)
 			fmt.Fprintf(w, "User deteled successfully!!")
-			test = false
+			wrongInput = false
 		}
 	}
-	if test == true {
+	if wrongInput == true {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "User does not exist!!")
 		return

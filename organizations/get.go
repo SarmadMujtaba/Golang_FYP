@@ -14,7 +14,7 @@ import (
 func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 	var organizations []structures.Organizations
 	var add structures.Organizations
-	test := true
+	isEmpty := true
 
 	add.Org_ID = r.URL.Query().Get("id")
 	if len(add.Org_ID) > 0 {
@@ -31,7 +31,7 @@ func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 		db.Conn.Find(&organizations)
 		for _, org := range organizations {
 			if org.Org_ID == add.Org_ID {
-				test = false
+				isEmpty = false
 				json.Marshal(org)
 				w.Header().Set("Content-Type", "application/json")
 				json.NewEncoder(w).Encode(org)
@@ -41,12 +41,12 @@ func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 
 		result := db.Conn.Find(&organizations, "U_ID = ?", add.Org_ID)
 		if result.Value != nil {
-			test = false
+			isEmpty = false
 
 			// return
 		}
 
-		if test == true {
+		if isEmpty == true {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "No organizations found!!")
 			return
