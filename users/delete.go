@@ -33,6 +33,14 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	db.Conn.Find(&organizations)
+	for _, orgs := range organizations {
+		if orgs.U_ID == check.ID {
+			db.Conn.Where("Org_ID = ?", orgs.Org_ID).Delete(&members)
+			wrongInput = false
+		}
+	}
+
 	db.Conn.Find(&members)
 	for _, member := range members {
 		if member.U_ID == check.ID {

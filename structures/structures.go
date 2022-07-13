@@ -17,7 +17,7 @@ type Organizations struct {
 
 type Memberships struct {
 	ID     string `json:"pk" gorm:"primaryKey;autoIncrement:false"`
-	U_ID   string `json:"id"`
+	U_ID   string `json:"id" validate:"uuid"`
 	Org_ID string `json:"org_id" validate:"uuid"`
 	// Users         Users         `gorm:"foreignKey:U_ID;references:ID"`
 	// Organizations Organizations `gorm:"foreignKey:Org_ID;references:Org_ID"`

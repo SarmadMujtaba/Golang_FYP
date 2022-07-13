@@ -28,5 +28,6 @@ func Handler() {
 	route.HandleFunc("/organizations", organizations.PostOrganizations).Methods(http.MethodPost)
 	route.HandleFunc("/organizations", organizations.DeleteOrganizations).Methods(http.MethodDelete)
 	route.HandleFunc("/members", members.GetMembers).Methods(http.MethodGet)
+	route.HandleFunc("/members", members.PostMembers).Methods(http.MethodPost)
 	log.Fatal(http.ListenAndServe(":5020", route))
 }

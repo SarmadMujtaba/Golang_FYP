@@ -1,9 +1,8 @@
 package db
 
 import (
-	"fmt"
-
 	"PostJson/structures"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 )

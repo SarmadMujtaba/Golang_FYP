@@ -19,6 +19,7 @@ func GetMembers(w http.ResponseWriter, r *http.Request) {
 	add.Org_ID = r.URL.Query().Get("id")
 	if len(add.Org_ID) > 0 {
 		// populating add for validation
+		add.U_ID = add.Org_ID
 		validate := validator.New()
 		err := validate.Struct(add)
 		if err != nil {
@@ -39,7 +40,6 @@ func GetMembers(w http.ResponseWriter, r *http.Request) {
 				result := db.Conn.Find(&user, "ID = ?", member.U_ID)
 				w.Header().Set("Content-Type", "application/json")
 				json.NewEncoder(w).Encode(result.Value)
-				return
 			}
 		}
 		if wrongInput == true {
