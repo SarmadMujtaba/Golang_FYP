@@ -4,7 +4,6 @@ import (
 	"PostJson/db"
 	"PostJson/members"
 	"PostJson/organizations"
-	"PostJson/structures"
 	"PostJson/users"
 	"log"
 	"net/http"
@@ -15,7 +14,6 @@ import (
 
 func main() {
 	db.Connection()
-	db.Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	Handler()
 }
 

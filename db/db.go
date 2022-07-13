@@ -24,6 +24,7 @@ func Connection() {
 	if err != nil {
 		panic(err)
 	}
+	Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
 
 	Conn.Model(&structures.Memberships{}).AddForeignKey("u_id", "users(id)", "RESTRICT", "RESTRICT")
