@@ -48,5 +48,4 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 	db.Conn.Create(&add)
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "User inserted!!")
-	return
 }

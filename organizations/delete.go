@@ -42,7 +42,7 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if wrongInput == true {
+	if wrongInput {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Organization does not exist!!")
 		return

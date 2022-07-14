@@ -46,7 +46,7 @@ func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 			// return
 		}
 
-		if isEmpty == true {
+		if isEmpty {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "No organizations found!!")
 			return
@@ -74,5 +74,4 @@ func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 	json.Marshal(organizations)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(organizations)
-	return
 }

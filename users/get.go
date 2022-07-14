@@ -40,7 +40,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-		if wrongInput == true {
+		if wrongInput {
 			w.WriteHeader(404)
 			fmt.Fprintf(w, "This user ID does not exist!!")
 			return
@@ -58,5 +58,4 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	json.Marshal(users)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
-	return
 }

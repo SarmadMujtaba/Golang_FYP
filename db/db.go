@@ -31,5 +31,4 @@ func Connection() {
 	Conn.Model(&structures.Memberships{}).AddForeignKey("org_id", "organizations(org_id)", "RESTRICT", "RESTRICT")
 
 	fmt.Println("Connection Established...")
-
 }

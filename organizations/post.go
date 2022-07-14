@@ -45,7 +45,7 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if duplicate == true {
+	if duplicate {
 		w.WriteHeader(400)
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
@@ -71,5 +71,4 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "Organization Created!!")
-	return
 }

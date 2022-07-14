@@ -42,7 +42,7 @@ func GetMembers(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode(result.Value)
 			}
 		}
-		if wrongInput == true {
+		if wrongInput {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "No organizations found!!")
 			return
