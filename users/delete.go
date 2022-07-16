@@ -33,36 +33,36 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Incorrect input!!")
 			return
 		}
-	}
 
-	db.Conn.Find(&organizations)
-	for _, orgs := range organizations {
-		if orgs.U_ID == check.ID {
-			// Deleting User's organizations' jobs and their required skills
-			db.Conn.Where("Org_id = ?", orgs.Org_ID).Find(&jobs)
-			for _, row := range jobs {
-				db.Conn.Where("ID = ?", row.ID).Delete(&reqSkills)
+		db.Conn.Find(&organizations)
+		for _, orgs := range organizations {
+			if orgs.U_ID == check.ID {
+				// Deleting User's organizations' jobs and their required skills
+				db.Conn.Where("Org_id = ?", orgs.Org_ID).Find(&jobs)
+				for _, row := range jobs {
+					db.Conn.Where("ID = ?", row.ID).Delete(&reqSkills)
+				}
+				db.Conn.Where("Org_id = ?", orgs.Org_ID).Delete(&jobs)
+				// Deleting User's memberships to all organizations
+				db.Conn.Where("Org_ID = ?", orgs.Org_ID).Delete(&members)
+				wrongInput = false
 			}
-			db.Conn.Where("Org_id = ?", orgs.Org_ID).Delete(&jobs)
-			// Deleting User's memberships to all organizations
-			db.Conn.Where("Org_ID = ?", orgs.Org_ID).Delete(&members)
-			wrongInput = false
 		}
-	}
 
-	db.Conn.Find(&members)
-	for _, member := range members {
-		if member.U_ID == check.ID {
-			db.Conn.Where("U_ID = ?", check.ID).Delete(&members)
-			wrongInput = false
+		db.Conn.Find(&members)
+		for _, member := range members {
+			if member.U_ID == check.ID {
+				db.Conn.Where("U_ID = ?", check.ID).Delete(&members)
+				wrongInput = false
+			}
 		}
-	}
 
-	db.Conn.Find(&organizations)
-	for _, orgs := range organizations {
-		if orgs.U_ID == check.ID {
-			db.Conn.Where("U_ID = ?", check.ID).Delete(&organizations)
-			wrongInput = false
+		db.Conn.Find(&organizations)
+		for _, orgs := range organizations {
+			if orgs.U_ID == check.ID {
+				db.Conn.Where("U_ID = ?", check.ID).Delete(&organizations)
+				wrongInput = false
+			}
 		}
 
 		db.Conn.Find(&users)

@@ -26,7 +26,7 @@ func GetJobs(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Incorrect input!!")
 			return
 		}
-
+		// Returns all jobs of an organization
 		db.Conn.Find(&jobs, "Org_id = ?", job.Org_id)
 
 		if len(jobs) == 0 {
@@ -40,7 +40,7 @@ func GetJobs(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(jobs)
 		return
 	}
-
+	// Returns all jobs against a designation name
 	job.Designation = r.URL.Query().Get("job_name")
 	if len(job.Designation) > 0 {
 		db.Conn.Where("Designation LIKE ?", "%"+job.Designation+"%").Find(&jobs)
