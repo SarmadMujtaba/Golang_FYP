@@ -12,16 +12,7 @@ import (
 
 func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	var check structures.Users
-	var organizations []structures.Organizations
 	var users []structures.Users
-	var members []structures.Memberships
-	var jobs []structures.Jobs
-	var reqSkills []structures.RequiredSkills
-	var skills []structures.Skills
-	var exps []structures.Experience
-	var profiles []structures.Profile
-	var apps []structures.Applications
-
 	wrongInput := true
 
 	check.ID = r.URL.Query().Get("id")
@@ -36,70 +27,6 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "Incorrect input!!")
 			return
-		}
-
-		db.Conn.Find(&organizations)
-		for _, orgs := range organizations {
-			if orgs.U_ID == check.ID {
-				// Deleting User's organizations' jobs and their required skills
-				db.Conn.Where("Org_id = ?", orgs.Org_ID).Find(&jobs)
-				for _, row := range jobs {
-					db.Conn.Where("ID = ?", row.ID).Delete(&reqSkills)
-					db.Conn.Where("U_ID = ?", row.ID).Delete(&apps)
-				}
-				db.Conn.Where("Org_id = ?", orgs.Org_ID).Delete(&jobs)
-				// Deleting User's memberships to all organizations
-				db.Conn.Where("Org_ID = ?", orgs.Org_ID).Delete(&members)
-				wrongInput = false
-			}
-		}
-
-		db.Conn.Find(&members)
-		for _, member := range members {
-			if member.U_ID == check.ID {
-				db.Conn.Where("U_ID = ?", check.ID).Delete(&members)
-				wrongInput = false
-			}
-		}
-
-		db.Conn.Find(&organizations)
-		for _, orgs := range organizations {
-			if orgs.U_ID == check.ID {
-				db.Conn.Where("U_ID = ?", check.ID).Delete(&organizations)
-				wrongInput = false
-			}
-		}
-
-		db.Conn.Find(&profiles)
-		for _, row := range profiles {
-			if row.U_ID == check.ID {
-				db.Conn.Where("U_ID = ?", check.ID).Delete(&profiles)
-				wrongInput = false
-			}
-		}
-
-		db.Conn.Find(&skills)
-		for _, row := range skills {
-			if row.U_ID == check.ID {
-				db.Conn.Where("U_ID = ?", check.ID).Delete(&skills)
-				wrongInput = false
-			}
-		}
-
-		db.Conn.Find(&exps)
-		for _, row := range exps {
-			if row.U_ID == check.ID {
-				db.Conn.Where("U_ID = ?", check.ID).Delete(&exps)
-				wrongInput = false
-			}
-		}
-
-		db.Conn.Find(&apps)
-		for _, row := range apps {
-			if row.U_ID == check.ID {
-				db.Conn.Where("U_ID = ?", check.ID).Delete(&apps)
-				wrongInput = false
-			}
 		}
 
 		db.Conn.Find(&users)

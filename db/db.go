@@ -34,6 +34,8 @@ func Connection() {
 	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
 
 	// Adding foreign Keys
+	Conn.Model(&structures.Organizations{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+
 	Conn.Model(&structures.Memberships{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
 	Conn.Model(&structures.Memberships{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
 

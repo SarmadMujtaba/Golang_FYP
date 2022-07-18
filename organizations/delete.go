@@ -13,11 +13,6 @@ import (
 func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	var check structures.Organizations
 	var organizations []structures.Organizations
-	var members []structures.Memberships
-	var jobs []structures.Jobs
-	var reqSkills []structures.RequiredSkills
-	var apps []structures.Applications
-
 	wrongInput := true
 
 	check.Org_ID = r.URL.Query().Get("id")
@@ -36,13 +31,6 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	db.Conn.Find(&organizations)
 	for _, usr := range organizations {
 		if usr.Org_ID == check.Org_ID {
-			db.Conn.Where("Org_id = ?", check.Org_ID).Find(&jobs)
-			for _, row := range jobs {
-				db.Conn.Where("ID = ?", row.ID).Delete(&reqSkills)
-				db.Conn.Where("ID = ?", row.ID).Delete(&apps)
-			}
-			db.Conn.Where("Org_id = ?", check.Org_ID).Delete(&jobs)
-			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&members)
 			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&organizations)
 			w.WriteHeader(200)
 			fmt.Fprintf(w, "Organization deteled successfully!!")
