@@ -29,16 +29,24 @@ func Connection() {
 	// Migrating structures to Mysql tables
 	Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	Conn.AutoMigrate(&structures.Category{}, &structures.Jobs{}, &structures.RequiredSkills{})
+	Conn.AutoMigrate(&structures.Experience{}, &structures.Skills{}, &structures.Profile{}, structures.Applications{})
 
 	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
 
 	// Adding foreign Keys
-	Conn.Model(&structures.Memberships{}).AddForeignKey("u_id", "users(id)", "RESTRICT", "RESTRICT")
-	Conn.Model(&structures.Memberships{}).AddForeignKey("org_id", "organizations(org_id)", "RESTRICT", "RESTRICT")
+	Conn.Model(&structures.Memberships{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.Memberships{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
 
-	Conn.Model(&structures.Jobs{}).AddForeignKey("org_id", "organizations(org_id)", "RESTRICT", "RESTRICT")
-	Conn.Model(&structures.Jobs{}).AddForeignKey("cat_id", "categories(id)", "RESTRICT", "RESTRICT")
-	Conn.Model(&structures.RequiredSkills{}).AddForeignKey("id", "jobs(id)", "RESTRICT", "RESTRICT")
+	Conn.Model(&structures.Jobs{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.Jobs{}).AddForeignKey("cat_id", "categories(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.RequiredSkills{}).AddForeignKey("id", "jobs(id)", "CASCADE", "CASCADE")
+
+	Conn.Model(&structures.Experience{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.Skills{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.Profile{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+
+	Conn.Model(&structures.Applications{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.Applications{}).AddForeignKey("job_id", "jobs(id)", "CASCADE", "CASCADE")
 
 	// Populating categories for the First time execution
 	Conn.Find(&cats)

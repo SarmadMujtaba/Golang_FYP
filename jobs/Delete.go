@@ -13,6 +13,7 @@ func DeleteJob(w http.ResponseWriter, r *http.Request) {
 	var check structures.Jobs
 	var jobs []structures.Jobs
 	var reqSkills []structures.RequiredSkills
+	var apps []structures.Applications
 
 	wrongInput := true
 
@@ -34,6 +35,7 @@ func DeleteJob(w http.ResponseWriter, r *http.Request) {
 	for _, usr := range jobs {
 		if usr.ID == check.ID {
 			db.Conn.Where("ID = ?", check.ID).Delete(&reqSkills)
+			db.Conn.Where("ID = ?", check.ID).Delete(&apps)
 			db.Conn.Where("ID = ?", check.ID).Delete(&jobs)
 			w.WriteHeader(200)
 			fmt.Fprintf(w, "Job deteled successfully!!")

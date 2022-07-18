@@ -1,10 +1,12 @@
 package main
 
 import (
+	"PostJson/applications"
 	"PostJson/db"
 	"PostJson/jobs"
 	"PostJson/members"
 	"PostJson/organizations"
+	userprofile "PostJson/userProfile"
 	"PostJson/users"
 	"log"
 	"net/http"
@@ -31,6 +33,13 @@ func Handler() {
 	route.HandleFunc("/jobs", jobs.GetJobs).Methods(http.MethodGet)
 	route.HandleFunc("/jobs", jobs.PostJob).Methods(http.MethodPost)
 	route.HandleFunc("/jobs", jobs.DeleteJob).Methods(http.MethodDelete)
+	route.HandleFunc("/jobs/skills", jobs.AddSkill).Methods(http.MethodPost)
 	route.HandleFunc("/category", jobs.GetCategory).Methods(http.MethodGet)
+	route.HandleFunc("/profile", userprofile.Profile).Methods(http.MethodPut)
+	route.HandleFunc("/profile/skills", userprofile.AddSkill).Methods(http.MethodPost)
+	route.HandleFunc("/profile/experience", userprofile.AddExperience).Methods(http.MethodPost)
+	route.HandleFunc("/application", applications.PostApplication).Methods(http.MethodPost)
+	route.HandleFunc("/application", applications.GetApplications).Methods(http.MethodGet)
+	route.HandleFunc("/application", applications.DeleteApplications).Methods(http.MethodDelete)
 	log.Fatal(http.ListenAndServe(":5020", route))
 }

@@ -16,6 +16,7 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	var members []structures.Memberships
 	var jobs []structures.Jobs
 	var reqSkills []structures.RequiredSkills
+	var apps []structures.Applications
 
 	wrongInput := true
 
@@ -38,6 +39,7 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 			db.Conn.Where("Org_id = ?", check.Org_ID).Find(&jobs)
 			for _, row := range jobs {
 				db.Conn.Where("ID = ?", row.ID).Delete(&reqSkills)
+				db.Conn.Where("ID = ?", row.ID).Delete(&apps)
 			}
 			db.Conn.Where("Org_id = ?", check.Org_ID).Delete(&jobs)
 			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&members)

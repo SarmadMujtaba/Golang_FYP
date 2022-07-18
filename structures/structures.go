@@ -44,6 +44,28 @@ type Category struct {
 }
 
 type RequiredSkills struct {
-	ID    string `json:"id"`
+	ID    string `json:"job_id"`
 	Skill string `json:"skill"`
+}
+
+type Experience struct {
+	U_ID       string `json:"user_id" validate:"uuid"`
+	Experience string `json:"experience"`
+}
+
+type Skills struct {
+	U_ID  string `json:"user_id" validate:"uuid"`
+	Skill string `json:"skill"`
+}
+
+type Profile struct {
+	U_ID      string `json:"user_id" validate:"uuid"`
+	Education string `json:"education"`
+	Phone     string `json:"phone" validate:"numeric"`
+}
+
+type Applications struct {
+	Job_ID string `json:"job_id" validate:"uuid"`
+	U_ID   string `json:"user_id" validate:"uuid"`
+	Status string `json:"status"`
 }

@@ -6,6 +6,18 @@ select * from users;
 
 select * from organizations;
 
+select * from jobs;
+
+select * from categories;
+
+select * from required_skills;
+
+select * from profiles;
+
+select * from skills;
+
+select * from experiences;
+
 show databases;
 
 create table users(
