@@ -35,6 +35,7 @@ func Handler() {
 	route.HandleFunc("/jobs", jobs.DeleteJob).Methods(http.MethodDelete)
 	route.HandleFunc("/jobs/skills", jobs.AddSkill).Methods(http.MethodPost)
 	route.HandleFunc("/category", jobs.GetCategory).Methods(http.MethodGet)
+	route.HandleFunc("/profile", userprofile.GetProfile).Methods(http.MethodGet)
 	route.HandleFunc("/profile", userprofile.Profile).Methods(http.MethodPut)
 	route.HandleFunc("/profile/skills", userprofile.AddSkill).Methods(http.MethodPost)
 	route.HandleFunc("/profile/experience", userprofile.AddExperience).Methods(http.MethodPost)

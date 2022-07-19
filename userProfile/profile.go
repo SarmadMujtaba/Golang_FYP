@@ -56,7 +56,6 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 		// if profile already exists, delete its skills and exp, and update its profile (Put request)
 		db.Conn.Where("U_ID = ?", profile.U_ID).Delete(&skills)
 		db.Conn.Where("U_ID = ?", profile.U_ID).Delete(&experience)
-		//db.Conn.Where("U_ID = ?", profile.U_ID).Update(&profile)
 		db.Conn.Model(&profile).Where("U_ID = ?", profile.U_ID).Update(&profile)
 		w.WriteHeader(200)
 		fmt.Fprintf(w, "Profile Updated!!")

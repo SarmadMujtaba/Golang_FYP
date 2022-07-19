@@ -59,9 +59,11 @@ type Skills struct {
 }
 
 type Profile struct {
-	U_ID      string `json:"user_id" validate:"uuid"`
-	Education string `json:"education"`
-	Phone     string `json:"phone" validate:"numeric"`
+	U_ID       string `json:"user_id" validate:"uuid"`
+	Education  string `json:"education"`
+	Phone      string `json:"phone" validate:"numeric"`
+	Experience []Experience
+	Skills     []Skills
 }
 
 type Applications struct {
