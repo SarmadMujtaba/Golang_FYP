@@ -36,6 +36,7 @@ type Jobs struct {
 	Description string `json:"description"`
 	Location    string `json:"location"`
 	Salary      string `json:"salary"`
+	CreatedAt   time.Time
 }
 
 type Category struct {
@@ -67,7 +68,8 @@ type Profile struct {
 }
 
 type Applications struct {
-	Job_ID string `json:"job_id" validate:"uuid"`
-	U_ID   string `json:"user_id" validate:"uuid"`
-	Status string `json:"status"`
+	Job_ID    string `json:"job_id" validate:"uuid"`
+	U_ID      string `json:"user_id" validate:"uuid"`
+	Status    string `json:"status"`
+	CreatedAt time.Time
 }
