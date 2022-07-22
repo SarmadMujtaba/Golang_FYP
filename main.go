@@ -1,3 +1,15 @@
+//  FYP APIs:
+//   version: 0.0.1
+//   title: FYP APIs
+//  Schemes: http
+//  Host: localhost:5020
+//  BasePath: /
+//  Consumes:
+//    - application/json
+//  Produces:
+//    - application/json
+//
+// swagger:meta
 package main
 
 import (
