@@ -8,6 +8,16 @@ import (
 	"net/http"
 )
 
+// swagger:route GET /category?category_id Jobs catParam
+//
+// Lists all jobs of a category
+//
+// This endpoint returns category specific jobs (1: Full-Time, 2: Part-Time, 3: Internship) if you pass that category ID as a query parameter
+//
+// responses:
+//  200: Jobs
+//  400: Error
+
 func GetCategory(w http.ResponseWriter, r *http.Request) {
 	var jobs []structures.Jobs
 	var job structures.Jobs

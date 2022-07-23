@@ -10,6 +10,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route GET /profile?user_id Profile userProfile
+//
+// Get User's Profile
+//
+// This endpoint returns a user's Profile if you pass its ID as a query parameter
+//
+// responses:
+//  200: Users
+//  400: Error
+
 func GetProfile(w http.ResponseWriter, r *http.Request) {
 	var profile structures.Profile
 	var exps []structures.Experience

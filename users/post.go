@@ -13,6 +13,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /users User post-user
+//
+// Add User
+//
+// You can add a user through this endpoint by filling in the details of the user to be added.
+//
+// responses:
+//  201: Users
+//  409: Error
+//  400: Error
+
 func PostUsers(w http.ResponseWriter, r *http.Request) {
 	var add structures.Users
 	allUsers := []structures.Users{}

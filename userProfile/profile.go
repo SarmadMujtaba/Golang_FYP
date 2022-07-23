@@ -11,6 +11,18 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route PUT /profile Profile post-profile
+//
+// Add Profile
+//
+// You can add a user profile through this endpoint by filling in the details of the user to be added.
+//
+// responses:
+//  200: Profile
+//  201: Users
+//  409: Error
+//  400: Error
+
 func Profile(w http.ResponseWriter, r *http.Request) {
 	var profile structures.Profile
 	var profiles []structures.Profile

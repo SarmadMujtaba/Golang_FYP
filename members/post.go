@@ -3,52 +3,70 @@ package members
 import (
 	"PostJson/db"
 	"PostJson/structures"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/google/uuid"
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /members Memberships post-member
+//
+// Add membership
+//
+// You can add a member of an organization through this endpoint by filling in the details.
+//
+// responses:
+//  201: Memberships
+//  409: Error
+//  400: Error
+
 func PostMembers(w http.ResponseWriter, r *http.Request) {
-	// var user structures.Users
-	// var org structures.Organizations
+	var members []structures.Memberships
 	var member structures.Memberships
-	var repeatCheck []structures.Memberships
+	duplicate := true
 
-	// user.ID = r.URL.Query().Get("user_id")
-	// org.Org_ID = r.URL.Query().Get("org_id")
-	member.U_ID = r.URL.Query().Get("user_id")
-	member.Org_ID = r.URL.Query().Get("org_id")
+	dataFromWeb, _ := ioutil.ReadAll(r.Body)
+	var dataToCompare map[string]string
+	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	if len(member.Org_ID) > 0 && len(member.U_ID) > 0 {
+	id := uuid.New()
+	member.ID = id.String()
+	member.U_ID = dataToCompare["user_id"]
+	member.Org_ID = dataToCompare["org_id"]
 
-		validate := validator.New()
-		err := validate.Struct(member)
-		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, "Incorrect input!!")
-			return
-		}
-
-		db.Conn.Where("U_ID = ?", member.U_ID).Find(&repeatCheck)
-		for _, row := range repeatCheck {
-			if row.Org_ID == member.Org_ID {
-				w.WriteHeader(409)
-				fmt.Fprintf(w, "Membership already exist!!")
-				return
-			}
-		}
-
-		id := uuid.New()
-		member.ID = id.String()
-		result := db.Conn.Create(&member)
-		if result.Error != nil {
-			w.WriteHeader(400)
-			fmt.Fprintln(w, "Could not enter record!!")
-			return
-		}
-		fmt.Fprintln(w, "Member Added!!")
+	validate := validator.New()
+	err := validate.Struct(member)
+	if err != nil {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, "Incorrect input!!")
 		return
 	}
+
+	db.Conn.Find(&members)
+	for _, row := range members {
+		if row.U_ID == member.U_ID {
+			if row.Org_ID == member.Org_ID {
+				duplicate = false
+			}
+		}
+	}
+
+	if !duplicate {
+		w.WriteHeader(400)
+		fmt.Fprintln(w, "Membership Already Exist!!")
+		return
+	}
+
+	result := db.Conn.Create(&member)
+	if result.Error != nil {
+		w.WriteHeader(400)
+		fmt.Fprintln(w, "Could not enter record!!")
+		return
+	}
+
+	w.WriteHeader(201)
+	fmt.Fprintf(w, "Membership Added!!")
 }

@@ -11,6 +11,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /jobs/skills Jobs post-requiredSkill
+//
+// Add Required Skill
+//
+// You can add multiple required skills for a job through this endpoint by filling in the details.
+//
+// responses:
+//  201: RequiredSkills
+//  400: Error
+
 func AddSkill(w http.ResponseWriter, r *http.Request) {
 	var skill structures.RequiredSkills
 	var jobs []structures.Jobs
@@ -19,7 +29,7 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	skill.ID = dataToCompare["job_id"]
+	skill.Job_ID = dataToCompare["job_id"]
 	skill.Skill = dataToCompare["skill"]
 
 	validate := validator.New()
@@ -30,7 +40,7 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.Conn.Where("ID = ?", skill.ID).Find(&jobs)
+	db.Conn.Where("ID = ?", skill.Job_ID).Find(&jobs)
 	if len(jobs) == 0 {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "job does not exist!!")

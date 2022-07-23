@@ -10,6 +10,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route DELETE /users?id User deleteParam
+//
+// Delete User
+//
+// This endpoint deletes a user if you pass its ID as a query parameter
+//
+// responses:
+//  200: Error
+//  400: Error
+
 func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 	var check structures.Users
 	var users []structures.Users
@@ -45,5 +55,9 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+	} else {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, "Missing Parameters!!")
+		return
 	}
 }

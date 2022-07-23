@@ -11,6 +11,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route GET /organizations?id Organization orgParam
+//
+// Lists all / single organizations
+//
+// This endpoint returns all organizations if no query parameter is passed. However, it returns single organization if you pass its ID as a query parameter
+//
+// responses:
+//  200: Organizations
+//  404: Error
+//  400: Error
+
 func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 	var organizations []structures.Organizations
 	var add structures.Organizations

@@ -41,7 +41,7 @@ func Connection() {
 
 	Conn.Model(&structures.Jobs{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
 	Conn.Model(&structures.Jobs{}).AddForeignKey("cat_id", "categories(id)", "CASCADE", "CASCADE")
-	Conn.Model(&structures.RequiredSkills{}).AddForeignKey("id", "jobs(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.RequiredSkills{}).AddForeignKey("job_id", "jobs(id)", "CASCADE", "CASCADE")
 
 	Conn.Model(&structures.Experience{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
 	Conn.Model(&structures.Skills{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")

@@ -13,6 +13,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /organizations Organization post-org
+//
+// Add organization
+//
+// You can add an organization through this endpoint by filling in the details of the organization to be added.
+//
+// responses:
+//  201: Organizations
+//  404: Error
+//  400: Error
+
 func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	var add structures.Organizations
 	var users []structures.Users

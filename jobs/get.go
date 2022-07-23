@@ -10,6 +10,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route GET /jobs?org_id Jobs jobParam
+//
+// Lists all / single Job
+//
+// This endpoint returns all Jobs if no query parameter is passed. However, it returns organization specific jobs if you pass that organization's ID as a query parameter
+//
+// responses:
+//  200: Jobs
+//  404: Error
+//  400: Error
+
 func GetJobs(w http.ResponseWriter, r *http.Request) {
 	var jobs []structures.Jobs
 	var job structures.Jobs

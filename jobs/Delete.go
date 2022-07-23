@@ -9,6 +9,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route DELETE /jobs?id Jobs deleteJob
+//
+// Delete Job
+//
+// This endpoint deletes a Job if you pass its ID as a query parameter
+//
+// responses:
+//  200: Error
+//  400: Error
+
 func DeleteJob(w http.ResponseWriter, r *http.Request) {
 	var check structures.Jobs
 	var jobs []structures.Jobs

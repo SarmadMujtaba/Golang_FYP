@@ -11,6 +11,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route GET /users?id User userParam
+//
+// Lists all / single users
+//
+// This endpoint returns all users if no query parameter is passed. However, it returns single user if you pass its ID as a query parameter
+//
+// responses:
+//  200: Users
+//  404: Error
+//  400: Error
+
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	var users []structures.Users
 	var add structures.Users

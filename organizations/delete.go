@@ -10,6 +10,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route DELETE /organizations?id Organization deleteOrgParam
+//
+// Delete Organization
+//
+// This endpoint deletes an organization if you pass its ID as a query parameter
+//
+// responses:
+//  200: Error
+//  400: Error
+
 func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	var check structures.Organizations
 	var organizations []structures.Organizations
@@ -26,21 +36,25 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Incorrect input!!")
 			return
 		}
-	}
 
-	db.Conn.Find(&organizations)
-	for _, usr := range organizations {
-		if usr.Org_ID == check.Org_ID {
-			db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&organizations)
-			w.WriteHeader(200)
-			fmt.Fprintf(w, "Organization deteled successfully!!")
-			wrongInput = false
+		db.Conn.Find(&organizations)
+		for _, usr := range organizations {
+			if usr.Org_ID == check.Org_ID {
+				db.Conn.Where("Org_ID = ?", check.Org_ID).Delete(&organizations)
+				w.WriteHeader(200)
+				fmt.Fprintf(w, "Organization deteled successfully!!")
+				wrongInput = false
+			}
 		}
-	}
 
-	if wrongInput {
+		if wrongInput {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Organization does not exist!!")
+			return
+		}
+	} else {
 		w.WriteHeader(400)
-		fmt.Fprintf(w, "Organization does not exist!!")
+		fmt.Fprintf(w, "Missing Parameters!!")
 		return
 	}
 }

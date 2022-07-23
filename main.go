@@ -1,6 +1,6 @@
-//  FYP APIs:
+//  Package classification Final Year Project - APIs.
 //   version: 0.0.1
-//   title: FYP APIs
+//   title: Final Year Project
 //  Schemes: http
 //  Host: localhost:5020
 //  BasePath: /
@@ -8,6 +8,7 @@
 //    - application/json
 //  Produces:
 //    - application/json
+//  Contact: Sarmad Mujtaba <srmdmjtba@gmail.com>
 //
 // swagger:meta
 package main
@@ -23,6 +24,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-openapi/runtime/middleware"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
@@ -34,6 +36,14 @@ func main() {
 
 func Handler() {
 	route := mux.NewRouter()
+
+	// documentation for developers
+	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.SwaggerUI(opts, nil)
+	route.Handle("/docs", sh)
+
+	route.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+
 	route.HandleFunc("/users", users.GetUsers).Methods(http.MethodGet)
 	route.HandleFunc("/users", users.PostUsers).Methods(http.MethodPost)
 	route.HandleFunc("/users", users.DeleteUsers).Methods(http.MethodDelete)
@@ -43,6 +53,7 @@ func Handler() {
 	route.HandleFunc("/members", members.GetMembers).Methods(http.MethodGet)
 	route.HandleFunc("/members", members.PostMembers).Methods(http.MethodPost)
 	route.HandleFunc("/jobs", jobs.GetJobs).Methods(http.MethodGet)
+	route.HandleFunc("/jobs/designations", jobs.GetDesignations).Methods(http.MethodGet)
 	route.HandleFunc("/jobs", jobs.PostJob).Methods(http.MethodPost)
 	route.HandleFunc("/jobs", jobs.DeleteJob).Methods(http.MethodDelete)
 	route.HandleFunc("/jobs/skills", jobs.AddSkill).Methods(http.MethodPost)

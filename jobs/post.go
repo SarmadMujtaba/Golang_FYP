@@ -12,6 +12,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /jobs Jobs post-job
+//
+// Add Job
+//
+// You can add a Job through this endpoint by filling in the details of the job to be added and the organization which is posting the job.
+//
+// responses:
+//  201: Jobs
+//  400: Error
+
 func PostJob(w http.ResponseWriter, r *http.Request) {
 
 	var add structures.Jobs
