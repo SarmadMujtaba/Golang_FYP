@@ -11,6 +11,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /application Application post-application
+//
+// Add Application
+//
+// You can add a user's application to a job through this endpoint by filling in the details of the user and the job.
+//
+// responses:
+//  200: Applications
+//  400: Error
+//  409: Error
+
 func PostApplication(w http.ResponseWriter, r *http.Request) {
 	// var user structures.Users
 	// var org structures.Organizations
@@ -48,5 +59,6 @@ func PostApplication(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
 	}
+	w.WriteHeader(200)
 	fmt.Fprintln(w, "Application Submitted!!")
 }

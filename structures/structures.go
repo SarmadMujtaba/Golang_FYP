@@ -214,14 +214,36 @@ type AddRequiredSkillsSwagger struct {
 	Body RequiredSkills `json:"body"`
 }
 
+// swagger:model Experience
 type Experience struct {
-	U_ID       string `json:"user_id" validate:"uuid"`
+	// User ID
+	U_ID string `json:"user_id" validate:"uuid"`
+	// Experience Details
 	Experience string `json:"experience"`
 }
 
+// swagger:parameters post-experience
+type AddExperienceSwagger struct {
+	//  Add details of the user
+	//  in: body
+	//  required: true
+	Body Experience `json:"body"`
+}
+
+// swagger:model Skills
 type Skills struct {
-	U_ID  string `json:"user_id" validate:"uuid"`
+	// User ID
+	U_ID string `json:"user_id" validate:"uuid"`
+	// Experience Details
 	Skill string `json:"skill"`
+}
+
+// swagger:parameters post-skills
+type AddSkillSwagger struct {
+	//  Add details of the user
+	//  in: body
+	//  required: true
+	Body Skills `json:"body"`
 }
 
 type Profile struct {
@@ -262,4 +284,19 @@ type Applications struct {
 	U_ID      string `json:"user_id" validate:"uuid"`
 	Status    string `json:"status"`
 	CreatedAt time.Time
+}
+
+// swagger:model Applications
+type ApplicationWrapper struct {
+	Job_ID string `json:"job_id" validate:"uuid"`
+	U_ID   string `json:"user_id" validate:"uuid"`
+	Status string `json:"status"`
+}
+
+// swagger:parameters post-application
+type AddApplicationSwagger struct {
+	//  Add details of the user
+	//  in: body
+	//  required: true
+	Body ApplicationWrapper `json:"body"`
 }

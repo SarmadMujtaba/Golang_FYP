@@ -2,6 +2,32 @@ basePath: /
 consumes:
 - application/json
 definitions:
+  Applications:
+    properties:
+      job_id:
+        type: string
+        x-go-name: Job_ID
+      status:
+        type: string
+        x-go-name: Status
+      user_id:
+        type: string
+        x-go-name: U_ID
+    type: object
+    x-go-name: ApplicationWrapper
+    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
+  Experience:
+    properties:
+      experience:
+        description: Experience Details
+        type: string
+        x-go-name: Experience
+      user_id:
+        description: User ID
+        type: string
+        x-go-name: U_ID
+    type: object
+    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   Jobs:
     properties:
       CreatedAt:
@@ -135,6 +161,18 @@ definitions:
         x-go-name: Skill
     type: object
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
+  Skills:
+    properties:
+      skill:
+        description: Experience Details
+        type: string
+        x-go-name: Skill
+      user_id:
+        description: User ID
+        type: string
+        x-go-name: U_ID
+    type: object
+    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   UserWrapper:
     properties:
       email:
@@ -228,6 +266,31 @@ info:
   title: Final Year Project - APIs.
   version: 0.0.1
 paths:
+  /application:
+    post:
+      description: You can add a user's application to a job through this endpoint
+        by filling in the details of the user and the job.
+      operationId: post-application
+      parameters:
+      - description: Add details of the user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Applications'
+        x-go-name: Body
+      responses:
+        "200":
+          description: Applications
+          schema:
+            $ref: '#/definitions/Applications'
+        "400":
+          $ref: '#/responses/Error'
+        "409":
+          $ref: '#/responses/Error'
+      summary: Add Application
+      tags:
+      - Application
   /category?category_id:
     get:
       description: 'This endpoint returns category specific jobs (1: Full-Time, 2:
@@ -500,6 +563,52 @@ paths:
         "409":
           $ref: '#/responses/Error'
       summary: Add Profile
+      tags:
+      - Profile
+  /profile/experience:
+    post:
+      description: You can add a user profile's experience through this endpoint by
+        filling in the details of the user.
+      operationId: post-experience
+      parameters:
+      - description: Add details of the user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Experience'
+        x-go-name: Body
+      responses:
+        "201":
+          description: Users
+          schema:
+            $ref: '#/definitions/Users'
+        "400":
+          $ref: '#/responses/Error'
+      summary: Add Experience
+      tags:
+      - Profile
+  /profile/skills:
+    post:
+      description: You can add a user profile's Skills through this endpoint by filling
+        in the details of the user.
+      operationId: post-skills
+      parameters:
+      - description: Add details of the user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Skills'
+        x-go-name: Body
+      responses:
+        "201":
+          description: Users
+          schema:
+            $ref: '#/definitions/Users'
+        "400":
+          $ref: '#/responses/Error'
+      summary: Add Skill
       tags:
       - Profile
   /profile?user_id:

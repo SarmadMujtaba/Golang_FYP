@@ -11,6 +11,16 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// swagger:route POST /profile/experience Profile post-experience
+//
+// Add Experience
+//
+// You can add a user profile's experience through this endpoint by filling in the details of the user.
+//
+// responses:
+//  201: Users
+//  400: Error
+
 func AddExperience(w http.ResponseWriter, r *http.Request) {
 	var exp structures.Experience
 	var user []structures.Users
