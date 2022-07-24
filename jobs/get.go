@@ -10,7 +10,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route GET /jobs?org_id Jobs jobParam
+// swagger:route GET /jobs Jobs jobParam
 //
 // Lists all / single Job
 //

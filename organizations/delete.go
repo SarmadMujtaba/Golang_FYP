@@ -10,7 +10,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route DELETE /organizations?id Organization deleteOrgParam
+// swagger:route DELETE /organizations Organization deleteOrgParam
 //
 // Delete Organization
 //

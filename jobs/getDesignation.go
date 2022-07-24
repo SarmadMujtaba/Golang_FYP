@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// swagger:route GET /jobs/designations?job_name Jobs nameParam
+// swagger:route GET /jobs/designations Jobs nameParam
 //
 // Lists Jobs of given designation
 //

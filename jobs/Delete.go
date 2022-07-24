@@ -9,7 +9,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route DELETE /jobs?id Jobs deleteJob
+// swagger:route DELETE /jobs Jobs deleteJob
 //
 // Delete Job
 //

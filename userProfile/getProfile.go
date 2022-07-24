@@ -10,7 +10,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route GET /profile?user_id Profile userProfile
+// swagger:route GET /profile Profile userProfile
 //
 // Get User's Profile
 //

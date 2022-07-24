@@ -11,7 +11,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route GET /organizations?id Organization orgParam
+// swagger:route GET /organizations Organization orgParam
 //
 // Lists all / single organizations
 //

@@ -291,7 +291,7 @@ paths:
       summary: Add Application
       tags:
       - Application
-  /category?category_id:
+  /category:
     get:
       description: 'This endpoint returns category specific jobs (1: Full-Time, 2:
         Part-Time, 3: Internship) if you pass that category ID as a query parameter'
@@ -313,6 +313,46 @@ paths:
       tags:
       - Jobs
   /jobs:
+    delete:
+      description: This endpoint deletes a Job if you pass its ID as a query parameter
+      operationId: deleteJob
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/Error'
+        "400":
+          $ref: '#/responses/Error'
+      summary: Delete Job
+      tags:
+      - Jobs
+    get:
+      description: This endpoint returns all Jobs if no query parameter is passed.
+        However, it returns organization specific jobs if you pass that organization's
+        ID as a query parameter
+      operationId: jobParam
+      parameters:
+      - description: Organization ID
+        in: query
+        name: org_id
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          description: Jobs
+          schema:
+            $ref: '#/definitions/Jobs'
+        "400":
+          $ref: '#/responses/Error'
+        "404":
+          $ref: '#/responses/Error'
+      summary: Lists all / single Job
+      tags:
+      - Jobs
     post:
       description: You can add a Job through this endpoint by filling in the details
         of the job to be added and the organization which is posting the job.
@@ -335,7 +375,7 @@ paths:
       summary: Add Job
       tags:
       - Jobs
-  /jobs/designations?job_name:
+  /jobs/designations:
     get:
       description: This endpoint returns designation specific jobs if you pass that
         designation's name as a query parameter
@@ -381,49 +421,27 @@ paths:
       summary: Add Required Skill
       tags:
       - Jobs
-  /jobs?id:
-    delete:
-      description: This endpoint deletes a Job if you pass its ID as a query parameter
-      operationId: deleteJob
-      parameters:
-      - description: User ID
-        in: query
-        name: id
-        type: string
-        x-go-name: ID
-      responses:
-        "200":
-          $ref: '#/responses/Error'
-        "400":
-          $ref: '#/responses/Error'
-      summary: Delete Job
-      tags:
-      - Jobs
-  /jobs?org_id:
+  /members:
     get:
-      description: This endpoint returns all Jobs if no query parameter is passed.
-        However, it returns organization specific jobs if you pass that organization's
-        ID as a query parameter
-      operationId: jobParam
+      description: This endpoint returns all members of an organizations based on
+        organization's ID passed as query parameter.
+      operationId: memberParam
       parameters:
       - description: Organization ID
         in: query
         name: org_id
         type: string
-        x-go-name: ID
+        x-go-name: Org_ID
       responses:
         "200":
-          description: Jobs
+          description: Memberships
           schema:
-            $ref: '#/definitions/Jobs'
+            $ref: '#/definitions/Memberships'
         "400":
           $ref: '#/responses/Error'
-        "404":
-          $ref: '#/responses/Error'
-      summary: Lists all / single Job
+      summary: Lists Members
       tags:
-      - Jobs
-  /members:
+      - Memberships
     post:
       description: You can add a member of an organization through this endpoint by
         filling in the details.
@@ -448,53 +466,7 @@ paths:
       summary: Add membership
       tags:
       - Memberships
-  /members?org_id:
-    get:
-      description: This endpoint returns all members of an organizations based on
-        organization's ID passed as query parameter.
-      operationId: memberParam
-      parameters:
-      - description: Organization ID
-        in: query
-        name: org_id
-        type: string
-        x-go-name: Org_ID
-      responses:
-        "200":
-          description: Memberships
-          schema:
-            $ref: '#/definitions/Memberships'
-        "400":
-          $ref: '#/responses/Error'
-      summary: Lists Members
-      tags:
-      - Memberships
   /organizations:
-    post:
-      description: You can add an organization through this endpoint by filling in
-        the details of the organization to be added.
-      operationId: post-org
-      parameters:
-      - description: Add details of the Organization
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/OrgWrapper'
-        x-go-name: Body
-      responses:
-        "201":
-          description: Organizations
-          schema:
-            $ref: '#/definitions/Organizations'
-        "400":
-          $ref: '#/responses/Error'
-        "404":
-          $ref: '#/responses/Error'
-      summary: Add organization
-      tags:
-      - Organization
-  /organizations?id:
     delete:
       description: This endpoint deletes an organization if you pass its ID as a query
         parameter
@@ -536,7 +508,51 @@ paths:
       summary: Lists all / single organizations
       tags:
       - Organization
+    post:
+      description: You can add an organization through this endpoint by filling in
+        the details of the organization to be added.
+      operationId: post-org
+      parameters:
+      - description: Add details of the Organization
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/OrgWrapper'
+        x-go-name: Body
+      responses:
+        "201":
+          description: Organizations
+          schema:
+            $ref: '#/definitions/Organizations'
+        "400":
+          $ref: '#/responses/Error'
+        "404":
+          $ref: '#/responses/Error'
+      summary: Add organization
+      tags:
+      - Organization
   /profile:
+    get:
+      description: This endpoint returns a user's Profile if you pass its ID as a
+        query parameter
+      operationId: userProfile
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        type: string
+        x-go-name: User_ID
+      responses:
+        "200":
+          description: Users
+          schema:
+            $ref: '#/definitions/Users'
+        "400":
+          $ref: '#/responses/Error'
+      summary: Get User's Profile
+      tags:
+      - Profile
     put:
       description: You can add a user profile through this endpoint by filling in
         the details of the user to be added.
@@ -611,53 +627,7 @@ paths:
       summary: Add Skill
       tags:
       - Profile
-  /profile?user_id:
-    get:
-      description: This endpoint returns a user's Profile if you pass its ID as a
-        query parameter
-      operationId: userProfile
-      parameters:
-      - description: User ID
-        in: query
-        name: user_id
-        type: string
-        x-go-name: User_ID
-      responses:
-        "200":
-          description: Users
-          schema:
-            $ref: '#/definitions/Users'
-        "400":
-          $ref: '#/responses/Error'
-      summary: Get User's Profile
-      tags:
-      - Profile
   /users:
-    post:
-      description: You can add a user through this endpoint by filling in the details
-        of the user to be added.
-      operationId: post-user
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/UserWrapper'
-        x-go-name: Body
-      responses:
-        "201":
-          description: Users
-          schema:
-            $ref: '#/definitions/Users'
-        "400":
-          $ref: '#/responses/Error'
-        "409":
-          $ref: '#/responses/Error'
-      summary: Add User
-      tags:
-      - User
-  /users?id:
     delete:
       description: This endpoint deletes a user if you pass its ID as a query parameter
       operationId: deleteParam
@@ -695,6 +665,30 @@ paths:
         "404":
           $ref: '#/responses/Error'
       summary: Lists all / single users
+      tags:
+      - User
+    post:
+      description: You can add a user through this endpoint by filling in the details
+        of the user to be added.
+      operationId: post-user
+      parameters:
+      - description: Add details of the user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserWrapper'
+        x-go-name: Body
+      responses:
+        "201":
+          description: Users
+          schema:
+            $ref: '#/definitions/Users'
+        "400":
+          $ref: '#/responses/Error'
+        "409":
+          $ref: '#/responses/Error'
+      summary: Add User
       tags:
       - User
 produces:
