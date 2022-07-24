@@ -12,7 +12,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route POST /members Memberships post-member
+// swagger:route POST /members Memberships post-members
 //
 // Add membership
 //

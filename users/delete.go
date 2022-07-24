@@ -10,7 +10,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route DELETE /users User deleteParam
+// swagger:route DELETE /users User delete-users
 //
 // Delete User
 //

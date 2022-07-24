@@ -13,7 +13,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route POST /users User post-user
+// swagger:route POST /users User post-users
 //
 // Add User
 //

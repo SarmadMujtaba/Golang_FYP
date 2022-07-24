@@ -11,7 +11,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route GET /users User userParam
+// swagger:route GET /users User get-users
 //
 // Lists all / single users
 //

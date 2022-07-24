@@ -11,7 +11,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route POST /profile/skills Profile post-skills
+// swagger:route POST /profile/skills Profile add-skills
 //
 // Add Skill
 //

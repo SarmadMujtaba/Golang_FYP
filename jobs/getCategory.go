@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// swagger:route GET /category Jobs catParam
+// swagger:route GET /category Jobs get-category
 //
 // Lists all jobs of a category
 //

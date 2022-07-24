@@ -10,7 +10,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route GET /members Memberships memberParam
+// swagger:route GET /members Memberships get-members
 //
 // Lists Members
 //

@@ -13,7 +13,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route POST /organizations Organization post-org
+// swagger:route POST /organizations Organization post-organizations
 //
 // Add organization
 //

@@ -4,6 +4,9 @@ consumes:
 definitions:
   Applications:
     properties:
+      CreatedAt:
+        format: date-time
+        type: string
       job_id:
         type: string
         x-go-name: Job_ID
@@ -14,7 +17,16 @@ definitions:
         type: string
         x-go-name: U_ID
     type: object
-    x-go-name: ApplicationWrapper
+    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
+  Category:
+    properties:
+      id:
+        type: string
+        x-go-name: ID
+      type:
+        type: string
+        x-go-name: Type
+    type: object
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   Experience:
     properties:
@@ -84,26 +96,6 @@ definitions:
         x-go-name: U_ID
     type: object
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
-  OrgWrapper:
-    properties:
-      about:
-        description: The email of the user
-        type: string
-        x-go-name: About
-      name:
-        description: The name of a user
-        type: string
-        x-go-name: Name
-      pass:
-        description: The password of the user
-        type: string
-        x-go-name: Website
-      user_id:
-        description: Organization's owner's ID
-        type: string
-        x-go-name: U_ID
-    type: object
-    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   Organizations:
     properties:
       CreatedAt:
@@ -134,20 +126,24 @@ definitions:
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   Profile:
     properties:
+      Experience:
+        items:
+          $ref: '#/definitions/Experience'
+        type: array
+      Skills:
+        items:
+          $ref: '#/definitions/Skills'
+        type: array
       education:
-        description: user's education
         type: string
         x-go-name: Education
       phone:
-        description: user's Phone number
         type: string
         x-go-name: Phone
       user_id:
-        description: ID of user of which, the profile is to be added
         type: string
         x-go-name: U_ID
     type: object
-    x-go-name: ProfileWrapper
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   RequiredSkills:
     properties:
@@ -171,22 +167,6 @@ definitions:
         description: User ID
         type: string
         x-go-name: U_ID
-    type: object
-    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
-  UserWrapper:
-    properties:
-      email:
-        description: The email of the user
-        type: string
-        x-go-name: Email
-      name:
-        description: The name of a user
-        type: string
-        x-go-name: Name
-      pass:
-        description: The password of the user
-        type: string
-        x-go-name: Pass
     type: object
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
   Users:
@@ -213,51 +193,6 @@ definitions:
         x-go-name: Pass
     type: object
     x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
-  jobWrapper:
-    properties:
-      cat_id:
-        description: Job Category ID
-        type: string
-        x-go-name: Cat_ID
-      description:
-        description: Description of the job
-        type: string
-        x-go-name: Description
-      designation:
-        description: job Designation or name
-        type: string
-        x-go-name: Designation
-      location:
-        description: Location of the job
-        type: string
-        x-go-name: Location
-      org_id:
-        type: string
-        x-go-name: Org_id
-      salary:
-        description: Estimated salary of the job
-        type: string
-        x-go-name: Salary
-    type: object
-    x-go-name: JobWrapper
-    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
-  memberWrapper:
-    properties:
-      org_id:
-        description: |-
-          Organization ID
-          in: body
-        type: string
-        x-go-name: Org_ID
-      user_id:
-        description: |-
-          User ID
-          in: body
-        type: string
-        x-go-name: U_ID
-    type: object
-    x-go-name: MemberWrapper
-    x-go-package: _/home/sarmad/Go_Practice/PostJson/structures
 host: localhost:5020
 info:
   contact:
@@ -271,14 +206,6 @@ paths:
       description: You can add a user's application to a job through this endpoint
         by filling in the details of the user and the job.
       operationId: post-application
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/Applications'
-        x-go-name: Body
       responses:
         "200":
           description: Applications
@@ -295,13 +222,7 @@ paths:
     get:
       description: 'This endpoint returns category specific jobs (1: Full-Time, 2:
         Part-Time, 3: Internship) if you pass that category ID as a query parameter'
-      operationId: catParam
-      parameters:
-      - description: Category ID
-        in: query
-        name: category_id
-        type: string
-        x-go-name: Category_ID
+      operationId: get-category
       responses:
         "200":
           description: Jobs
@@ -316,12 +237,6 @@ paths:
     delete:
       description: This endpoint deletes a Job if you pass its ID as a query parameter
       operationId: deleteJob
-      parameters:
-      - description: User ID
-        in: query
-        name: id
-        type: string
-        x-go-name: ID
       responses:
         "200":
           $ref: '#/responses/Error'
@@ -334,13 +249,7 @@ paths:
       description: This endpoint returns all Jobs if no query parameter is passed.
         However, it returns organization specific jobs if you pass that organization's
         ID as a query parameter
-      operationId: jobParam
-      parameters:
-      - description: Organization ID
-        in: query
-        name: org_id
-        type: string
-        x-go-name: ID
+      operationId: get-jobs
       responses:
         "200":
           description: Jobs
@@ -357,14 +266,6 @@ paths:
       description: You can add a Job through this endpoint by filling in the details
         of the job to be added and the organization which is posting the job.
       operationId: post-job
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/jobWrapper'
-        x-go-name: Body
       responses:
         "201":
           description: Jobs
@@ -379,13 +280,7 @@ paths:
     get:
       description: This endpoint returns designation specific jobs if you pass that
         designation's name as a query parameter
-      operationId: nameParam
-      parameters:
-      - description: Organization ID
-        in: query
-        name: job_name
-        type: string
-        x-go-name: Job_Name
+      operationId: get-designations
       responses:
         "200":
           description: Jobs
@@ -402,15 +297,7 @@ paths:
     post:
       description: You can add multiple required skills for a job through this endpoint
         by filling in the details.
-      operationId: post-requiredSkill
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/RequiredSkills'
-        x-go-name: Body
+      operationId: post-RequiredSkill
       responses:
         "201":
           description: RequiredSkills
@@ -425,13 +312,7 @@ paths:
     get:
       description: This endpoint returns all members of an organizations based on
         organization's ID passed as query parameter.
-      operationId: memberParam
-      parameters:
-      - description: Organization ID
-        in: query
-        name: org_id
-        type: string
-        x-go-name: Org_ID
+      operationId: get-members
       responses:
         "200":
           description: Memberships
@@ -445,15 +326,7 @@ paths:
     post:
       description: You can add a member of an organization through this endpoint by
         filling in the details.
-      operationId: post-member
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/memberWrapper'
-        x-go-name: Body
+      operationId: post-members
       responses:
         "201":
           description: Memberships
@@ -470,13 +343,7 @@ paths:
     delete:
       description: This endpoint deletes an organization if you pass its ID as a query
         parameter
-      operationId: deleteOrgParam
-      parameters:
-      - description: Organization ID
-        in: query
-        name: id
-        type: string
-        x-go-name: ID
+      operationId: delete-organizations
       responses:
         "200":
           $ref: '#/responses/Error'
@@ -489,13 +356,7 @@ paths:
       description: This endpoint returns all organizations if no query parameter is
         passed. However, it returns single organization if you pass its ID as a query
         parameter
-      operationId: orgParam
-      parameters:
-      - description: Organization ID
-        in: query
-        name: id
-        type: string
-        x-go-name: ID
+      operationId: get-organizations
       responses:
         "200":
           description: Organizations
@@ -511,15 +372,7 @@ paths:
     post:
       description: You can add an organization through this endpoint by filling in
         the details of the organization to be added.
-      operationId: post-org
-      parameters:
-      - description: Add details of the Organization
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/OrgWrapper'
-        x-go-name: Body
+      operationId: post-organizations
       responses:
         "201":
           description: Organizations
@@ -536,13 +389,7 @@ paths:
     get:
       description: This endpoint returns a user's Profile if you pass its ID as a
         query parameter
-      operationId: userProfile
-      parameters:
-      - description: User ID
-        in: query
-        name: user_id
-        type: string
-        x-go-name: User_ID
+      operationId: get-profile
       responses:
         "200":
           description: Users
@@ -557,14 +404,6 @@ paths:
       description: You can add a user profile through this endpoint by filling in
         the details of the user to be added.
       operationId: post-profile
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/Profile'
-        x-go-name: Body
       responses:
         "200":
           description: Profile
@@ -585,15 +424,7 @@ paths:
     post:
       description: You can add a user profile's experience through this endpoint by
         filling in the details of the user.
-      operationId: post-experience
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/Experience'
-        x-go-name: Body
+      operationId: add-experience
       responses:
         "201":
           description: Users
@@ -608,15 +439,7 @@ paths:
     post:
       description: You can add a user profile's Skills through this endpoint by filling
         in the details of the user.
-      operationId: post-skills
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/Skills'
-        x-go-name: Body
+      operationId: add-skills
       responses:
         "201":
           description: Users
@@ -630,13 +453,7 @@ paths:
   /users:
     delete:
       description: This endpoint deletes a user if you pass its ID as a query parameter
-      operationId: deleteParam
-      parameters:
-      - description: User ID
-        in: query
-        name: id
-        type: string
-        x-go-name: ID
+      operationId: delete-users
       responses:
         "200":
           $ref: '#/responses/Error'
@@ -648,13 +465,7 @@ paths:
     get:
       description: This endpoint returns all users if no query parameter is passed.
         However, it returns single user if you pass its ID as a query parameter
-      operationId: userParam
-      parameters:
-      - description: User ID
-        in: query
-        name: id
-        type: string
-        x-go-name: ID
+      operationId: get-users
       responses:
         "200":
           description: Users
@@ -670,15 +481,7 @@ paths:
     post:
       description: You can add a user through this endpoint by filling in the details
         of the user to be added.
-      operationId: post-user
-      parameters:
-      - description: Add details of the user
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/UserWrapper'
-        x-go-name: Body
+      operationId: post-users
       responses:
         "201":
           description: Users

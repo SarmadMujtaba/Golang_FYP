@@ -11,7 +11,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route POST /jobs/skills Jobs post-requiredSkill
+// swagger:route POST /jobs/skills Jobs post-RequiredSkill
 //
 // Add Required Skill
 //

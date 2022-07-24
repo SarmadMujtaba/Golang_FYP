@@ -11,7 +11,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// swagger:route POST /profile/experience Profile post-experience
+// swagger:route POST /profile/experience Profile add-experience
 //
 // Add Experience
 //
