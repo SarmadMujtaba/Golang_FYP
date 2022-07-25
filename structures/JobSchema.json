@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "properties": {
+        "org_id": {
+          "type": "string"
+        },
+        "cat_id": {
+          "type": "string"
+        },
+        "designation": {
+            "type": "string"
+        },
+        "description": {
+        "type": "string"
+        },
+        "location": {
+        "type": "string"
+        },
+        "salary": {
+        "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["org_id", "cat_id", "designation", "description", "location", "salary"]
+}

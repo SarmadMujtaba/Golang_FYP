@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "experience": {
+            "type": "string"
+          }
+    },
+    "additionalProperties": false,
+    "required": ["user_id", "experience"]
+}

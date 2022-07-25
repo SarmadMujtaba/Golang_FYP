@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -43,6 +44,22 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Incorrect Input")
+		return
+	}
+
+	// validating json schema
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/structures/ProfileSchema.json")
+	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+
+	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		panic(err.Error())
+	}
+	if !res.Valid() {
+		w.WriteHeader(400)
+		for _, desc := range res.Errors() {
+			fmt.Fprintln(w, desc.Description())
+		}
 		return
 	}
 

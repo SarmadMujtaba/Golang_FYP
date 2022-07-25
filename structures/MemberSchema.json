@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "org_id": {
+          "type": "string"
+        },
+        "user_id": {
+            "type": "string"
+          }
+    },
+    "additionalProperties": false,
+    "required": ["org_id", "user_id"]
+}

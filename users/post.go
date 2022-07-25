@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -44,6 +45,23 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Incorrect input!!")
+		return
+	}
+
+	// validating json schema
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/structures/UserSchema.json")
+	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		panic(err.Error())
+	}
+	if !result.Valid() {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, "Json Object is not valid. see errors :\n")
+		for _, desc := range result.Errors() {
+			fmt.Fprintln(w, desc.Description())
+		}
 		return
 	}
 

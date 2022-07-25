@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "skill": {
+            "type": "string"
+          }
+    },
+    "additionalProperties": false,
+    "required": ["user_id", "skill"]
+}

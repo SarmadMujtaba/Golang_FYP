@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "job_id": {
+          "type": "string"
+        },
+        "skill": {
+            "type": "string"
+          }
+    },
+    "additionalProperties": false,
+    "required": ["job_id", "skill"]
+}

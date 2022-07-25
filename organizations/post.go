@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -46,6 +47,22 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Incorrect input!!")
+		return
+	}
+
+	// validating json schema
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/structures/OrgSchema.json")
+	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+
+	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		panic(err.Error())
+	}
+	if !res.Valid() {
+		w.WriteHeader(400)
+		for _, desc := range res.Errors() {
+			fmt.Fprintln(w, desc.Description())
+		}
 		return
 	}
 
