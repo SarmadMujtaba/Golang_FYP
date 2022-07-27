@@ -2,6 +2,8 @@ package structures
 
 import (
 	"time"
+
+	jwt "github.com/golang-jwt/jwt"
 )
 
 // swagger:model Users
@@ -89,4 +91,9 @@ type Applications struct {
 	U_ID      string `json:"user_id" validate:"uuid"`
 	Status    string `json:"status"`
 	CreatedAt time.Time
+}
+
+type Claims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
 }

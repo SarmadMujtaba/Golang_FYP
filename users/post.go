@@ -49,7 +49,7 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/structures/UserSchema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/UserSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)

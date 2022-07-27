@@ -48,7 +48,7 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/structures/ProfileSchema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/ProfileSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
 
 	res, err := gojsonschema.Validate(schemaLoader, documentLoader)

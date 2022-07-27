@@ -15,8 +15,10 @@ package main
 
 import (
 	"PostJson/applications"
+	"PostJson/authentication"
 	"PostJson/db"
 	"PostJson/jobs"
+	"PostJson/login"
 	"PostJson/members"
 	"PostJson/organizations"
 	userprofile "PostJson/userProfile"
@@ -44,26 +46,27 @@ func Handler() {
 
 	route.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
-	route.HandleFunc("/users", users.GetUsers).Methods(http.MethodGet)
-	route.HandleFunc("/users", users.PostUsers).Methods(http.MethodPost)
-	route.HandleFunc("/users", users.DeleteUsers).Methods(http.MethodDelete)
-	route.HandleFunc("/organizations", organizations.GetOrganizations).Methods(http.MethodGet)
-	route.HandleFunc("/organizations", organizations.PostOrganizations).Methods(http.MethodPost)
-	route.HandleFunc("/organizations", organizations.DeleteOrganizations).Methods(http.MethodDelete)
-	route.HandleFunc("/members", members.GetMembers).Methods(http.MethodGet)
-	route.HandleFunc("/members", members.PostMembers).Methods(http.MethodPost)
-	route.HandleFunc("/jobs", jobs.GetJobs).Methods(http.MethodGet)
-	route.HandleFunc("/jobs/designations", jobs.GetDesignations).Methods(http.MethodGet)
-	route.HandleFunc("/jobs", jobs.PostJob).Methods(http.MethodPost)
-	route.HandleFunc("/jobs", jobs.DeleteJob).Methods(http.MethodDelete)
-	route.HandleFunc("/jobs/skills", jobs.AddSkill).Methods(http.MethodPost)
-	route.HandleFunc("/category", jobs.GetCategory).Methods(http.MethodGet)
-	route.HandleFunc("/profile", userprofile.GetProfile).Methods(http.MethodGet)
-	route.HandleFunc("/profile", userprofile.Profile).Methods(http.MethodPut)
-	route.HandleFunc("/profile/skills", userprofile.AddSkill).Methods(http.MethodPost)
-	route.HandleFunc("/profile/experience", userprofile.AddExperience).Methods(http.MethodPost)
-	route.HandleFunc("/application", applications.PostApplication).Methods(http.MethodPost)
-	route.HandleFunc("/application", applications.GetApplications).Methods(http.MethodGet)
-	route.HandleFunc("/application", applications.DeleteApplications).Methods(http.MethodDelete)
+	route.HandleFunc("/login", login.Login).Methods(http.MethodPost)
+	route.HandleFunc("/users", authentication.IsAuthorized(users.GetUsers)).Methods(http.MethodGet)
+	route.HandleFunc("/users", authentication.IsAuthorized(users.PostUsers)).Methods(http.MethodPost)
+	route.HandleFunc("/users", authentication.IsAuthorized(users.DeleteUsers)).Methods(http.MethodDelete)
+	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.GetOrganizations)).Methods(http.MethodGet)
+	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.PostOrganizations)).Methods(http.MethodPost)
+	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.DeleteOrganizations)).Methods(http.MethodDelete)
+	route.HandleFunc("/members", authentication.IsAuthorized(members.GetMembers)).Methods(http.MethodGet)
+	route.HandleFunc("/members", authentication.IsAuthorized(members.PostMembers)).Methods(http.MethodPost)
+	route.HandleFunc("/jobs", authentication.IsAuthorized(jobs.GetJobs)).Methods(http.MethodGet)
+	route.HandleFunc("/jobs/designations", authentication.IsAuthorized(jobs.GetDesignations)).Methods(http.MethodGet)
+	route.HandleFunc("/jobs", authentication.IsAuthorized(jobs.PostJob)).Methods(http.MethodPost)
+	route.HandleFunc("/jobs", authentication.IsAuthorized(jobs.DeleteJob)).Methods(http.MethodDelete)
+	route.HandleFunc("/jobs/skills", authentication.IsAuthorized(jobs.AddSkill)).Methods(http.MethodPost)
+	route.HandleFunc("/category", authentication.IsAuthorized(jobs.GetCategory)).Methods(http.MethodGet)
+	route.HandleFunc("/profile", authentication.IsAuthorized(userprofile.GetProfile)).Methods(http.MethodGet)
+	route.HandleFunc("/profile", authentication.IsAuthorized(userprofile.Profile)).Methods(http.MethodPut)
+	route.HandleFunc("/profile/skills", authentication.IsAuthorized(userprofile.AddSkill)).Methods(http.MethodPost)
+	route.HandleFunc("/profile/experience", authentication.IsAuthorized(userprofile.AddExperience)).Methods(http.MethodPost)
+	route.HandleFunc("/application", authentication.IsAuthorized(applications.PostApplication)).Methods(http.MethodPost)
+	route.HandleFunc("/application", authentication.IsAuthorized(applications.GetApplications)).Methods(http.MethodGet)
+	route.HandleFunc("/application", authentication.IsAuthorized(applications.DeleteApplications)).Methods(http.MethodDelete)
 	log.Fatal(http.ListenAndServe(":5020", route))
 }
