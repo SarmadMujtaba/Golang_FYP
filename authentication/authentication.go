@@ -2,7 +2,9 @@ package authentication
 
 import (
 	"PostJson/structures"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -14,7 +16,8 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 		cookie, err := r.Cookie("token")
 		if err != nil {
 			if err == http.ErrNoCookie {
-				w.WriteHeader(http.StatusUnauthorized)
+				w.WriteHeader(401)
+				fmt.Fprintf(w, "No cookie found!!")
 				return
 			}
 			w.WriteHeader(http.StatusBadRequest)
@@ -32,6 +35,7 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 
 		if err != nil {
 			if err == jwt.ErrSignatureInvalid {
+				fmt.Fprintf(w, "Request UnAuthorized!!")
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
@@ -40,9 +44,34 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		if !tkn.Valid {
+			fmt.Fprintf(w, "Request UnAuthorized!!")
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
+
+		// refresh token after every 30 minutes
+		if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) < (((time.Hour * 24) * 7) - (time.Minute * 30)) {
+			expirationTime := time.Now().Add(((time.Hour * 24) * 7))
+
+			claims.ExpiresAt = expirationTime.Unix()
+
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+			tokenString, err := token.SignedString(jwtKey)
+
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			http.SetCookie(w,
+				&http.Cookie{
+					Name:     "token",
+					Value:    tokenString,
+					HttpOnly: true,
+					Expires:  expirationTime,
+				})
+		}
+
 		handler.ServeHTTP(w, r)
 	}
 }

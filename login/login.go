@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	jwt "github.com/golang-jwt/jwt"
 )
@@ -47,8 +48,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 			// Generating Json Web Token for authenticating further requests
 
+			// Token will be valid for one week
+			expirationTime := time.Now().Add((time.Hour * 24) * 7)
+
 			claims := &structures.Claims{
 				Email: credentials.Email,
+				StandardClaims: jwt.StandardClaims{
+					ExpiresAt: expirationTime.Unix(),
+				},
 			}
 
 			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -61,8 +68,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 			http.SetCookie(w,
 				&http.Cookie{
-					Name:  "token",
-					Value: tokenString,
+					Name:    "token",
+					Value:   tokenString,
+					Expires: expirationTime,
+					// HttpOnly will
+					HttpOnly: true,
 				})
 
 			w.WriteHeader(200)
