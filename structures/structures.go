@@ -8,11 +8,12 @@ import (
 
 // swagger:model Users
 type Users struct {
-	ID        string `json:"id" validate:"uuid" gorm:"primaryKey;autoIncrement:false"`
-	Name      string `json:"name" validate:"alpha"`
-	Email     string `json:"email" validate:"email"`
-	Pass      string `json:"pass" validate:"alphanum"`
-	CreatedAt time.Time
+	ID         string `json:"id" validate:"uuid" gorm:"primaryKey;autoIncrement:false"`
+	Name       string `json:"name" validate:"alpha"`
+	Email      string `json:"email"`
+	Pass       string `json:"pass" validate:"alphanum"`
+	IsVerified bool
+	CreatedAt  time.Time
 }
 
 // swagger:response Error
@@ -95,5 +96,7 @@ type Applications struct {
 
 type Claims struct {
 	Email string `json:"email"`
+	Name  string `json:"name"`
+	Pass  string `json:"pass"`
 	jwt.StandardClaims
 }

@@ -1,11 +1,9 @@
-package users
+package login
 
 import (
 	"PostJson/db"
 	"PostJson/structures"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -25,19 +23,19 @@ import (
 //  409: Error
 //  400: Error
 
-func PostUsers(w http.ResponseWriter, r *http.Request) {
+func Signup(w http.ResponseWriter, r *http.Request) {
 	var add structures.Users
 	allUsers := []structures.Users{}
 
-	dataFromWeb, _ := ioutil.ReadAll(r.Body)
-	var dataToCompare map[string]string
-	json.Unmarshal(dataFromWeb, &dataToCompare)
+	// Receiving context of user data from middleware
+	dataFromWeb := r.Context().Value("object").(map[string]string)
 
 	id := uuid.New()
 	add.ID = id.String()
-	add.Email = dataToCompare["email"]
-	add.Name = dataToCompare["name"]
-	add.Pass = dataToCompare["pass"]
+	add.IsVerified = false
+	add.Email = dataFromWeb["email"]
+	add.Name = dataFromWeb["name"]
+	add.Pass = dataFromWeb["pass"]
 
 	// input validation
 	validate := validator.New()
@@ -50,7 +48,7 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 
 	// validating json schema
 	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/UserSchema.json")
-	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+	documentLoader := gojsonschema.NewGoLoader(dataFromWeb)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
@@ -68,6 +66,11 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 	db.Conn.Find(&allUsers)
 	for _, usr := range allUsers {
 		if usr.Email == add.Email {
+			if !usr.IsVerified {
+				w.WriteHeader(401)
+				fmt.Fprintf(w, "Email ID Unverified, kindly sign-up again!!")
+				return
+			}
 			w.WriteHeader(409)
 			fmt.Fprintf(w, "Email ID already exist!!")
 			return
@@ -76,5 +79,5 @@ func PostUsers(w http.ResponseWriter, r *http.Request) {
 
 	db.Conn.Create(&add)
 	w.WriteHeader(201)
-	fmt.Fprintf(w, "User inserted!!")
+	fmt.Fprintf(w, "User inserted, please visit your email for verification!!")
 }

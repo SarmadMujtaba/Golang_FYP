@@ -46,6 +46,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	for _, usr := range allUsers {
 		if usr.Email == credentials.Email && usr.Pass == credentials.Pass {
 
+			if !usr.IsVerified {
+				w.WriteHeader(http.StatusUnauthorized)
+				fmt.Fprintln(w, "Email not verified!!")
+				return
+			}
+
 			// Generating Json Web Token for authenticating further requests
 
 			// Token will be valid for one week
