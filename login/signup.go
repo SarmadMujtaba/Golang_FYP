@@ -68,7 +68,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		if usr.Email == add.Email {
 			if !usr.IsVerified {
 				w.WriteHeader(401)
-				fmt.Fprintf(w, "Email ID Unverified, kindly sign-up again!!")
+				fmt.Fprintf(w, "Email ID Unverified, please verify!!")
 				return
 			}
 			w.WriteHeader(409)
