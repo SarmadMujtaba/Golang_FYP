@@ -27,6 +27,8 @@ import (
 func PostMembers(w http.ResponseWriter, r *http.Request) {
 	var members []structures.Memberships
 	var member structures.Memberships
+	var user structures.Users
+	var invite structures.Invites
 	duplicate := true
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
@@ -84,6 +86,9 @@ func PostMembers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Deleting member's invitation
+	db.Conn.Where("ID = ?", member.U_ID).Find(&user)
+	db.Conn.Model(&invite).Where("Email = ?", user.Email).Delete(invite)
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "Membership Added!!")
 }

@@ -7,12 +7,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt"
 )
 
-var jwtKey = []byte("secret_key")
+var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var credentials structures.Users

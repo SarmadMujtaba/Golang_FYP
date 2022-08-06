@@ -3,6 +3,7 @@ package db
 import (
 	"PostJson/structures"
 	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 )
@@ -13,12 +14,12 @@ func Connection() {
 	var cats []structures.Category
 	var cat structures.Category
 	const (
-		host     = "localhost"
-		port     = 3306
-		user     = "root"
-		password = "DummySQL786"
-		dbname   = "db"
+		host   = "localhost"
+		port   = 3306
+		user   = "root"
+		dbname = "db"
 	)
+	password := os.Getenv("DB_PASSWORD")
 	connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
 
 	var err error
@@ -30,6 +31,7 @@ func Connection() {
 	Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	Conn.AutoMigrate(&structures.Category{}, &structures.Jobs{}, &structures.RequiredSkills{})
 	Conn.AutoMigrate(&structures.Experience{}, &structures.Skills{}, &structures.Profile{}, structures.Applications{})
+	Conn.AutoMigrate(&structures.Invites{})
 
 	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
 
@@ -49,6 +51,9 @@ func Connection() {
 
 	Conn.Model(&structures.Applications{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
 	Conn.Model(&structures.Applications{}).AddForeignKey("job_id", "jobs(id)", "CASCADE", "CASCADE")
+
+	Conn.Model(&structures.Invites{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
+	Conn.Model(&structures.Invites{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
 
 	// Populating categories for the First time execution
 	Conn.Find(&cats)

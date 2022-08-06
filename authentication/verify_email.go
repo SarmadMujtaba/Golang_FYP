@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/smtp"
+	"os"
 	"text/template"
 	"time"
 
@@ -56,7 +57,9 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 
 		// Sender data.
 		from := "191387@students.au.edu.pk"
-		password := "DummyUniID"
+		password := os.Getenv("EMAIL_PASSWORD")
+
+		//os.Setenv("Password", "DummyUniID")
 
 		// Receiver email address.
 		to := []string{
@@ -95,6 +98,5 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 			ctx = context.WithValue(ctx, "object", dataToCompare)
 			handler.ServeHTTP(w, r.WithContext(ctx))
 		}
-
 	}
 }

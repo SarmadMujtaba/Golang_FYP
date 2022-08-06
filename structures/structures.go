@@ -100,3 +100,11 @@ type Claims struct {
 	Pass  string `json:"pass"`
 	jwt.StandardClaims
 }
+
+type Invites struct {
+	U_ID      string `json:"owner_id" validate:"uuid"`
+	Org_ID    string `json:"org_id" validate:"uuid"`
+	Email     string `json:"target_email"`
+	Status    string `json:"status"`
+	CreatedAt time.Time
+}

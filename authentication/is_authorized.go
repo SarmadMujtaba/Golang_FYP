@@ -4,12 +4,13 @@ import (
 	"PostJson/structures"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
-var jwtKey = []byte("secret_key")
+var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -20,6 +21,7 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 				fmt.Fprintf(w, "No cookie found!!")
 				return
 			}
+			fmt.Fprintf(w, "Invalid or Missing token!!")
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

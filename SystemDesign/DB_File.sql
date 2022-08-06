@@ -18,6 +18,8 @@ select * from skills;
 
 select * from experiences;
 
+select * from invites;
+
 show databases;
 
 create table users(
