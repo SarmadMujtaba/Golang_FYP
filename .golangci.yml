@@ -10,7 +10,6 @@ linters:
     - gomnd
     - misspell
     - predeclared
-    - staticcheck
     - thelper
     - varcheck
     - whitespace

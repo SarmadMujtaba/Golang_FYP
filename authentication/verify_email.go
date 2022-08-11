@@ -59,8 +59,6 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		from := "191387@students.au.edu.pk"
 		password := os.Getenv("EMAIL_PASSWORD")
 
-		//os.Setenv("Password", "DummyUniID")
-
 		// Receiver email address.
 		to := []string{
 			dataToCompare["email"],
@@ -78,7 +76,7 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		var body bytes.Buffer
 
 		mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-		body.Write([]byte(fmt.Sprintf("Subject: Email Verification \n%s\n\n", mimeHeaders)))
+		body.Write([]byte(fmt.Sprintf("Subject: J2E Email Verification \n%s\n\n", mimeHeaders)))
 
 		// Appending token to HTML file
 		t.Execute(&body, struct {

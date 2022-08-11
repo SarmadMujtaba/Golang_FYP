@@ -47,7 +47,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/UserSchema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/SignupSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataFromWeb)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)

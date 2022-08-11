@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "email": {
+          "type": "string"
+        },
+        "pass": {
+          "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["email", "pass"]
+  }

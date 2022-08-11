@@ -24,6 +24,7 @@ func GetMembers(w http.ResponseWriter, r *http.Request) {
 	var member []structures.Memberships
 	var add structures.Memberships
 	var user []structures.Users
+	var org []structures.Organizations
 	wrongInput := true
 
 	add.Org_ID = r.URL.Query().Get("org_id")
@@ -55,11 +56,42 @@ func GetMembers(w http.ResponseWriter, r *http.Request) {
 		if wrongInput {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "No organizations found!!")
-			return
 		}
-	} else {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Missing Parameters!!")
 		return
 	}
+
+	add.U_ID = r.URL.Query().Get("user_id")
+	if len(add.U_ID) > 0 {
+		// populating add for validation
+		add.Org_ID = add.U_ID
+		validate := validator.New()
+		err := validate.Struct(add)
+		if err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Incorrect input!!")
+			return
+		}
+
+		isEmpty := db.Conn.Find(&member)
+		if isEmpty.Value == nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "No organizations found!!")
+			return
+		}
+		for _, member := range member {
+			if member.U_ID == add.U_ID {
+				wrongInput = false
+				result := db.Conn.Find(&org, "Org_ID = ?", member.Org_ID)
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(result.Value)
+			}
+		}
+		if wrongInput {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "No organizations found!!")
+		}
+		return
+	}
+	w.WriteHeader(400)
+	fmt.Fprintf(w, "Missing Parameters!!")
 }
