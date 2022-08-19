@@ -23,9 +23,12 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 		})
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		db.Conn.Model(&user).Where("email = ?", claims.Email).Delete(user)
-		fmt.Fprintln(w, "Verification link Expired!!")
+		db.Conn.Find(&user, "email = ?", claims.Email)
+		if !user.IsVerified {
+			db.Conn.Model(&user).Where("email = ?", claims.Email).Delete(user)
+		}
+
+		http.ServeFile(w, r, "HTML_Templates/failed.html")
 		return
 	}
 
@@ -36,6 +39,5 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db.Conn.Model(&user).Where("email = ?", claims.Email).Update("IsVerified", true)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Email Verified!!")
+	http.ServeFile(w, r, "HTML_Templates/success.html")
 }

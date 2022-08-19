@@ -91,7 +91,7 @@ func PostInvite(w http.ResponseWriter, r *http.Request) {
 
 		auth := smtp.PlainAuth("", from, password, smtpHost)
 
-		t, _ := template.ParseFiles("invite_template.html")
+		t, _ := template.ParseFiles("HTML_Templates/invite_template.html")
 
 		var body bytes.Buffer
 

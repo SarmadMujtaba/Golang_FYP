@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
+	"strings"
 	"text/template"
 	"time"
 
@@ -38,7 +39,7 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// JWT token generation
-		expirationTime := time.Now().Add(time.Minute * 10)
+		expirationTime := time.Now().Add(time.Minute * 3)
 
 		claims := &structures.Claims{
 			Email: dataToCompare["email"],
@@ -59,9 +60,10 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		from := "191387@students.au.edu.pk"
 		password := os.Getenv("EMAIL_PASSWORD")
 
+		receiver := strings.ReplaceAll(dataToCompare["email"], " ", "")
 		// Receiver email address.
 		to := []string{
-			dataToCompare["email"],
+			receiver,
 		}
 
 		// smtp server configuration.
@@ -71,7 +73,7 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		// Authentication.
 		auth := smtp.PlainAuth("", from, password, smtpHost)
 
-		t, _ := template.ParseFiles("email_template.html")
+		t, _ := template.ParseFiles("HTML_Templates/email_template.html")
 
 		var body bytes.Buffer
 
