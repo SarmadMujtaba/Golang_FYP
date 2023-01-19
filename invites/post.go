@@ -11,16 +11,68 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
+	"sync"
+	"time"
 
 	"gopkg.in/go-playground/validator.v9"
 )
 
+var wg sync.WaitGroup
+
+func SendEmail(uid string, orgid string, mail string, wr http.ResponseWriter) error {
+	defer wg.Done()
+	var owner structures.Users
+	var org structures.Organizations
+
+	db.Conn.Find(&owner, "ID = ?", uid)
+	db.Conn.Find(&org, "Org_ID = ?", orgid)
+
+	from := "191387@students.au.edu.pk"
+	password := os.Getenv("EMAIL_PASSWORD")
+
+	to := []string{
+		mail,
+	}
+
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+
+	t, _ := template.ParseFiles("HTML_Templates/invite_template.html")
+
+	var body bytes.Buffer
+
+	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body.Write([]byte(fmt.Sprintf("Subject: Invitation \n%s\n\n", mimeHeaders)))
+
+	// Appending token to HTML file
+	t.Execute(&body, struct {
+		Owner    string
+		Org_name string
+	}{
+		Owner:    owner.Name,
+		Org_name: org.Name,
+	})
+	// Sending email.
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
+	if err != nil {
+		wr.WriteHeader(http.StatusExpectationFailed)
+		fmt.Fprintln(wr, "Sending invitation link failed!!")
+		return err
+	} else {
+		wr.WriteHeader(http.StatusOK)
+		fmt.Fprintln(wr, "Invitation link sent on email!!")
+		return nil
+	}
+}
+
 func PostInvite(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
 	var add structures.Invites
 	var invites []structures.Invites
 	var users []structures.Users
-	var owner structures.Users
-	var org structures.Organizations
 	var owners []structures.Organizations
 	access := false
 	ownerFound := false
@@ -75,48 +127,24 @@ func PostInvite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !userFound {
-		// Sending invitation email to user
-		db.Conn.Find(&owner, "ID = ?", add.U_ID)
-		db.Conn.Find(&org, "Org_ID = ?", add.Org_ID)
+		// Sending invitation email to user through SendMail Goroutine
 
-		from := "191387@students.au.edu.pk"
-		password := os.Getenv("EMAIL_PASSWORD")
-
-		to := []string{
-			dataToCompare["target_email"],
-		}
-
-		smtpHost := "smtp.gmail.com"
-		smtpPort := "587"
-
-		auth := smtp.PlainAuth("", from, password, smtpHost)
-
-		t, _ := template.ParseFiles("HTML_Templates/invite_template.html")
-
-		var body bytes.Buffer
-
-		mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-		body.Write([]byte(fmt.Sprintf("Subject: Invitation \n%s\n\n", mimeHeaders)))
-
-		// Appending token to HTML file
-		t.Execute(&body, struct {
-			Owner    string
-			Org_name string
-		}{
-			Owner:    owner.Name,
-			Org_name: org.Name,
-		})
-
-		// Sending email.
-		err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
-		if err != nil {
-			w.WriteHeader(http.StatusExpectationFailed)
-			fmt.Fprintln(w, "Sending invitation link failed!!")
-			return
-		} else {
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprintln(w, "Invitation link sent on email!!")
-		}
+		uid := string(dataToCompare["owner"])
+		orgid := string(dataToCompare["org_id"])
+		mail := string(dataToCompare["target_email"])
+		// errs channel will hold the error in case SendMail returns it
+		// errs := make(chan error, 1)
+		// go func() {
+		// 	errs <- SendEmail(uid, orgid, mail, w)
+		// }()
+		wg.Add(1)
+		go SendEmail(uid, orgid, mail, w)
+		// if SendMail returned error (email sending failed), function will not signup
+		// if err := <-errs; err != nil {
+		// 	elapsed := time.Since(start)
+		// 	fmt.Printf("Binomial took %s", elapsed)
+		// 	return
+		// }
 	}
 
 	db.Conn.Find(&owners)
@@ -129,10 +157,10 @@ func PostInvite(w http.ResponseWriter, r *http.Request) {
 				if result.Error != nil {
 					w.WriteHeader(400)
 					fmt.Fprintln(w, "Could not add invite!!")
-					return
+				} else {
+					w.WriteHeader(201)
+					fmt.Fprintf(w, "Invite Added!!")
 				}
-				w.WriteHeader(201)
-				fmt.Fprintf(w, "Invite Added!!")
 			}
 		}
 	}
@@ -148,4 +176,8 @@ func PostInvite(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "This user does not owns any organization!!")
 		return
 	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("Binomial took %s", elapsed)
+	wg.Wait()
 }

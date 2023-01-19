@@ -19,7 +19,7 @@ select * from skills;
 select * from experiences;
 
 select * from invites;
-
+drop table invites;
 show databases;
 
 create table users(

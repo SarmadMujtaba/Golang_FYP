@@ -78,5 +78,8 @@ func Handler() {
 	route.HandleFunc("/application", authentication.IsAuthorized(applications.GetApplications)).Methods(http.MethodGet)
 	route.HandleFunc("/application", authentication.IsAuthorized(applications.DeleteApplications)).Methods(http.MethodDelete)
 	route.HandleFunc("/verify", authentication.Verify).Methods(http.MethodGet)
+
+	route.HandleFunc("/upload", applications.FileUpload).Methods(http.MethodPost)
+
 	log.Fatal(http.ListenAndServe(":5020", route))
 }
