@@ -28,7 +28,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	credentials.Pass = dataToCompare["pass"]
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/LoginSchema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/LoginSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)

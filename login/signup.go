@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
+
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -47,7 +48,9 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/SignupSchema.json")
+	// without docker, replace the address with local address i.e "file:///home/sarmad/Go_Practice/PostJson/schemas/SignupSchema.json"
+
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/SignupSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataFromWeb)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)

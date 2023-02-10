@@ -51,7 +51,7 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/OrgSchema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/OrgSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
 
 	res, err := gojsonschema.Validate(schemaLoader, documentLoader)

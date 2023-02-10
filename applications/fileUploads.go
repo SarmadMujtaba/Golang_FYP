@@ -11,7 +11,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(5 << 10)
 	// FormFile returns the first file for the given key `myFile`
 	// it also returns the FileHeader so we can get the Filename, the Header and the size of the file
-	file, handler, err := r.FormFile("myFile")
+	file, _, err := r.FormFile("myFile")
 	if err != nil {
 		fmt.Println("Error Retrieving the File")
 		fmt.Println(err)
@@ -19,9 +19,6 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
-	fmt.Printf("File Size: %+v\n", handler.Size)
-	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
 	// // Only allow specific file uploading format (pdf, docx)
 	// buff := make([]byte, 512)
@@ -40,9 +37,10 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 
 	// Create a temporary file within our 'FYP_Resumes' directory that follows
 	// a particular naming pattern (created directory manually)
-	tempFile, err := ioutil.TempFile("/home/sarmad/Desktop/FYP_Resumes", "upload-*.pdf")
+	str := "ABS-" + "*.pdf"
+	tempFile, err := ioutil.TempFile("/app/Resumes", str)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("msla 1: ", err)
 	}
 	defer tempFile.Close()
 
@@ -50,11 +48,12 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	// byte array
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("msla 2: ", err)
 	}
 	// write this byte array to our temporary file
 	tempFile.Write(fileBytes)
+
 	// return that we have successfully uploaded our file!
-	fmt.Fprintf(w, "Successfully Uploaded File\n")
 	w.WriteHeader(200)
+	fmt.Fprintf(w, "Successfully Uploaded File\n")
 }

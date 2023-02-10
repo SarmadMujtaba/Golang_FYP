@@ -46,7 +46,7 @@ func PostApplication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///home/sarmad/Go_Practice/PostJson/schemas/ApplicationSchema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ApplicationSchema.json")
 	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
 
 	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
