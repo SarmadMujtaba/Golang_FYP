@@ -81,5 +81,7 @@ func Handler() {
 
 	route.HandleFunc("/upload", applications.FileUpload).Methods(http.MethodPost)
 
+	route.HandleFunc("/application/shortlist", applications.Shortlist).Methods(http.MethodPost)
+
 	log.Fatal(http.ListenAndServe(":5020", route))
 }

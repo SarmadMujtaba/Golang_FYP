@@ -15,6 +15,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Error Retrieving the File")
 		fmt.Println(err)
+		fmt.Println(r.Header.Get("Content-Type"))
 		w.WriteHeader(400)
 		return
 	}
