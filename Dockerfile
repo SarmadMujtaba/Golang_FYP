@@ -19,6 +19,12 @@ RUN go build -o /main
 
 EXPOSE 5020
 
+# To remove permission issues, we added user (sarmad) to docker image instead of root
+RUN addgroup --g 1000 groupcontainer
+RUN adduser -u 1000 -G groupcontainer -h /home/containeruser -D containeruser
+ 
+USER containeruser
+
 CMD [ "/main" ]
 
 # First, Build with following command

@@ -12,9 +12,9 @@ import (
 )
 
 // swagger:model Applications
-type test struct {
-	U_ID string `json:"user_id" validate:"uuid"`
-}
+// type test struct {
+// 	U_ID string `json:"user_id" validate:"uuid"`
+// }
 
 func Shortlist(w http.ResponseWriter, r *http.Request) {
 
@@ -56,7 +56,7 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal(data, &dataToCompare)
 
 		// change url with python's url later. It is Path parameter after url
-		posturl := "http://127.0.0.1:8000/" + app.Job_ID
+		posturl := "http://host.docker.internal:8000/" + app.Job_ID
 
 		fmt.Println(string(data))
 
