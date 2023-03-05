@@ -16,11 +16,19 @@ import (
 // 	U_ID string `json:"user_id" validate:"uuid"`
 // }
 
+type myJSON struct {
+	Users          []string
+	RequiredSkills []string
+}
+
 func Shortlist(w http.ResponseWriter, r *http.Request) {
 
 	var t []test
+	var req_skills []structures.RequiredSkills
 	var app structures.Applications
 	var apps []structures.Applications
+	var usrs []string
+	var reqSkills []string
 	// dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
 	// json.Unmarshal(dataFromWeb, &dataToCompare)
@@ -39,12 +47,32 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 
 		// selecting U_ID only to be shortlisted
 		result := db.Conn.Model(&apps).Where("Job_ID = ?", app.Job_ID).Scan(&t)
-
 		if result.Error != nil {
 			w.WriteHeader(400)
 			fmt.Fprintln(w, result.Error)
 			return
 		}
+
+		// creating json array of users
+		for _, v := range t {
+			usrs = append(usrs, v.U_ID)
+		}
+
+		result2 := db.Conn.Model(&req_skills).Select("skill").Find(&req_skills)
+		if result2.Error != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Nothing to return")
+			return
+		}
+
+		// creating json array of skills
+		for _, v := range req_skills {
+			reqSkills = append(reqSkills, v.Skill)
+		}
+
+		// combining json arrays
+		jsondat := &myJSON{Users: usrs, RequiredSkills: reqSkills}
+		encjson, _ := json.Marshal(jsondat)
 
 		if len(t) == 0 {
 			w.WriteHeader(400)
@@ -58,33 +86,28 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 		// change url with python's url later. It is Path parameter after url
 		posturl := "http://host.docker.internal:8000/" + app.Job_ID
 
-		fmt.Println(string(data))
-
-		r, err := http.NewRequest("POST", posturl, bytes.NewBuffer(data))
-		if err != nil {
-			w.WriteHeader(http.StatusExpectationFailed)
-			fmt.Println(err)
-			return
-		}
-
-		r.Header.Add("Content-Type", "application/json")
-
-		client := &http.Client{}
-		resp, err := client.Do(r)
-		if err != nil {
-			w.WriteHeader(http.StatusExpectationFailed)
-			fmt.Println(err)
-			return
-		}
-
-		fmt.Println(resp.StatusCode)
+		// concurently sending request to python
+		go SendRequest(posturl, encjson)
 
 		w.WriteHeader(http.StatusOK)
-
-		json.Marshal(dataToCompare)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(dataToCompare)
-
 		fmt.Fprintln(w, "Shortlisting started!!")
 	}
+}
+
+func SendRequest(url string, data []byte) {
+	r, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	r.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(r)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(resp.StatusCode)
 }
