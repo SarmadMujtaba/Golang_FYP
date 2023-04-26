@@ -13,24 +13,40 @@ var Conn *gorm.DB
 func Connection() {
 	var cats []structures.Category
 	var cat structures.Category
-	const (
-		host   = "localhost"
-		port   = 3306
-		user   = "root"
-		dbname = "db"
+	// const (
+	// 	host   = "localhost"
+	// 	port   = 3306
+	// 	user   = "root"
+	// 	dbname = "db"
+	// )
+	// password := os.Getenv("DB_PASSWORD")
+
+	// // for running without docker compose
+	// // connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
+
+	// connString := fmt.Sprintf("%s:%s@tcp(34.93.113.208)/%s?charset=utf8&parseTime=True", user, password, dbname)
+	// fmt.Println(connString)
+	// var err error
+	// Conn, err = gorm.Open("mysql", connString)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	var (
+		dbUser         = os.Getenv("DB_USER")              // e.g. 'my-db-user'
+		dbPwd          = os.Getenv("DB_PASS")              // e.g. 'my-db-password'
+		dbName         = os.Getenv("DB_NAME")              // e.g. 'my-database'
+		unixSocketPath = os.Getenv("INSTANCE_UNIX_SOCKET") // e.g. '/cloudsql/project:region:instance'
 	)
-	password := os.Getenv("DB_PASSWORD")
 
-	// for running without docker compose
-	// connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
+	dbURI := fmt.Sprintf("%s:%s@unix(%s)/%s?parseTime=true",
+		dbUser, dbPwd, unixSocketPath, dbName)
 
-	connString := fmt.Sprintf("%s:%s@tcp(34.93.113.208)/%s?charset=utf8&parseTime=True", user, password, dbname)
-	fmt.Println(connString)
-	var err error
-	Conn, err = gorm.Open("mysql", connString)
+	// dbPool is the pool of database connections.
+	Conn, err := gorm.Open("mysql", dbURI)
 	if err != nil {
 		panic(err)
 	}
+
 	// Migrating structures to Mysql tables
 	Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	Conn.AutoMigrate(&structures.Category{}, &structures.Jobs{}, &structures.RequiredSkills{})
