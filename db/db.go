@@ -24,7 +24,7 @@ func Connection() {
 	// for running without docker compose
 	// connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
 
-	connString := fmt.Sprintf("%s:%s@tcp(db)/%s?charset=utf8&parseTime=True", user, password, dbname)
+	connString := fmt.Sprintf("%s:%s@tcp(34.93.113.208)/%s?charset=utf8&parseTime=True", user, password, dbname)
 	fmt.Println(connString)
 	var err error
 	Conn, err = gorm.Open("mysql", connString)
