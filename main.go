@@ -24,8 +24,10 @@ import (
 	"PostJson/organizations"
 	userprofile "PostJson/userProfile"
 	"PostJson/users"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-openapi/runtime/middleware"
 	_ "github.com/go-sql-driver/mysql"
@@ -83,5 +85,11 @@ func Handler() {
 
 	route.HandleFunc("/application/shortlist", applications.Shortlist).Methods(http.MethodPost)
 
-	log.Fatal(http.ListenAndServe(":5020", route))
+	// For GCP Deployment
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5020"
+	}
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), route))
 }
