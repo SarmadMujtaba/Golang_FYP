@@ -32,7 +32,7 @@ func Connection() {
 	// }
 
 	dbDriver := "mysql"
-	dbUser := "root"
+	dbUser := "me"
 	dbPass := "DummySQL786"
 	dbInstance := "elite-impact-384907:asia-south1:db-1"
 	dbName := "db"
