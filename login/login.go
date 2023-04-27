@@ -11,7 +11,6 @@ import (
 	"time"
 
 	jwt "github.com/golang-jwt/jwt"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_KEY"))
@@ -28,21 +27,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	credentials.Pass = dataToCompare["pass"]
 
 	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/LoginSchema.json")
-	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+	// schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/LoginSchema.json")
+	// documentLoader := gojsonschema.NewGoLoader(dataToCompare)
 
-	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	if err != nil {
-		panic(err.Error())
-	}
-	if !result.Valid() {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Json Object is not valid. see errors :\n")
-		for _, desc := range result.Errors() {
-			fmt.Fprintln(w, desc.Description())
-		}
-		return
-	}
+	// result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// if !result.Valid() {
+	// 	w.WriteHeader(400)
+	// 	fmt.Fprintf(w, "Json Object is not valid. see errors :\n")
+	// 	for _, desc := range result.Errors() {
+	// 		fmt.Fprintln(w, desc.Description())
+	// 	}
+	// 	return
+	// }
 
 	db.Conn.Find(&allUsers)
 	for _, usr := range allUsers {
