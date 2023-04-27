@@ -37,7 +37,9 @@ func Connection() {
 	dbInstance := "elite-impact-384907:asia-south1:db-1"
 	dbName := "db"
 
-	Conn, err := gorm.Open(dbDriver, dbUser+":"+dbPass+"@unix(/cloudsql/"+dbInstance+")/"+dbName)
+	dbURI := fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPass, dbInstance, dbName)
+
+	Conn, err := gorm.Open(dbDriver, dbURI)
 	if err != nil {
 		panic(err)
 	}
