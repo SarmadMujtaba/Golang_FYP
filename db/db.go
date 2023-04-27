@@ -34,10 +34,10 @@ func Connection() {
 	dbDriver := "mysql"
 	dbUser := "me"
 	dbPass := "DummySQL786"
-	dbInstance := "elite-impact-384907:asia-south1:db-1"
+	// dbInstance := "elite-impact-384907:asia-south1:db-1"
 	dbName := "db"
 
-	dbURI := fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPass, dbInstance, dbName)
+	dbURI := fmt.Sprintf("%s:%s@tcp(34.93.113.208)/%s?charset=utf8&parseTime=True", dbUser, dbPass, dbName)
 
 	Conn, err := gorm.Open(dbDriver, dbURI)
 	if err != nil {
