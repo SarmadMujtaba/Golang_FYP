@@ -3,6 +3,7 @@ package db
 import (
 	"PostJson/structures"
 	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 )
@@ -12,34 +13,21 @@ var Conn *gorm.DB
 func Connection() {
 	var cats []structures.Category
 	var cat structures.Category
-	// const (
-	// 	host   = "localhost"
-	// 	port   = 3306
-	// 	user   = "root"
-	// 	dbname = "db"
-	// )
-	// password := os.Getenv("DB_PASSWORD")
+	const (
+		host   = "localhost"
+		port   = 3306
+		user   = "root"
+		dbname = "db"
+	)
+	password := os.Getenv("DB_PASSWORD")
 
-	// // for running without docker compose
-	// // connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
+	// for running without docker compose
+	// connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
 
-	// connString := fmt.Sprintf("%s:%s@tcp(db)/%s?charset=utf8&parseTime=True", user, password, dbname)
-	// fmt.Println(connString)
-	// var err error
-	// Conn, err = gorm.Open("mysql", connString)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	dbDriver := "mysql"
-	dbUser := "me"
-	dbPass := "DummySQL786"
-	// dbInstance := "elite-impact-384907:asia-south1:db-1"
-	dbName := "db"
-
-	dbURI := fmt.Sprintf("%s:%s@tcp(34.93.113.208)/%s?charset=utf8&parseTime=True", dbUser, dbPass, dbName)
-
-	Conn, err := gorm.Open(dbDriver, dbURI)
+	connString := fmt.Sprintf("%s:%s@tcp(db)/%s?charset=utf8&parseTime=True", user, password, dbname)
+	fmt.Println(connString)
+	var err error
+	Conn, err = gorm.Open("mysql", connString)
 	if err != nil {
 		panic(err)
 	}
