@@ -83,6 +83,8 @@ func Handler() {
 
 	route.HandleFunc("/application/shortlist", applications.Shortlist).Methods(http.MethodPost)
 
+	route.HandleFunc("/application/update", applications.UpdateStatus).Methods(http.MethodPost)
+
 	log.Fatal(http.ListenAndServe(":5020", route))
 
 }
