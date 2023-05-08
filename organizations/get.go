@@ -21,7 +21,6 @@ import (
 //  200: Organizations
 //  404: Error
 //  400: Error
-
 func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 	var organizations []structures.Organizations
 	var add structures.Organizations
@@ -68,7 +67,7 @@ func GetOrganizations(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Nothing to return!!")
 			return
 		}
-		json.Marshal(organizations)
+		// json.Marshal(organizations)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(organizations)
 		return

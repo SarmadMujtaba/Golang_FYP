@@ -7,14 +7,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"time"
 
-	jwt "github.com/golang-jwt/jwt"
 	"github.com/xeipuuv/gojsonschema"
 )
 
-var jwtKey = []byte(os.Getenv("JWT_KEY"))
+// var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var credentials structures.Users
@@ -57,31 +54,31 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			// Generating Json Web Token for authenticating further requests
 
 			// Token will be valid for one week
-			expirationTime := time.Now().Add((time.Hour * 24) * 7)
+			// expirationTime := time.Now().Add((time.Hour * 24) * 7)
 
-			claims := &structures.Claims{
-				Email: credentials.Email,
-				StandardClaims: jwt.StandardClaims{
-					ExpiresAt: expirationTime.Unix(),
-				},
-			}
+			// claims := &structures.Claims{
+			// 	Email: credentials.Email,
+			// 	StandardClaims: jwt.StandardClaims{
+			// 		ExpiresAt: expirationTime.Unix(),
+			// 	},
+			// }
 
-			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-			tokenString, err := token.SignedString(jwtKey)
+			// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+			// tokenString, err := token.SignedString(jwtKey)
 
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
+			// if err != nil {
+			// 	w.WriteHeader(http.StatusInternalServerError)
+			// 	return
+			// }
 
-			http.SetCookie(w,
-				&http.Cookie{
-					Name:    "token",
-					Value:   tokenString,
-					Expires: expirationTime,
-					// HttpOnly will
-					HttpOnly: true,
-				})
+			// http.SetCookie(w,
+			// 	&http.Cookie{
+			// 		Name:    "token",
+			// 		Value:   tokenString,
+			// 		Expires: expirationTime,
+			// 		// HttpOnly will
+			// 		HttpOnly: true,
+			// 	})
 			json.Marshal(usr)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(usr)
