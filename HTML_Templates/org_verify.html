@@ -36,6 +36,7 @@
     -ms-text-size-adjust: 100%; /* 1 */
     -webkit-text-size-adjust: 100%; /* 2 */
   }
+
   /**
    * Better fluid images in Internet Explorer.
    */
@@ -110,8 +111,8 @@
         <![endif]-->
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
           <tr>
-            <td class="box" align="left" bgcolor="#f5f5f5" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;">
-              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Welcome to J2E!</h1>
+            <td class="box"  align="left" bgcolor="#f5f5f5" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;">
+              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Confirm Your Email Address</h1>
             </td>
           </tr>
         </table>
@@ -137,7 +138,7 @@
           <!-- start copy -->
           <tr>
             <td class="box" align="left" bgcolor="#f5f5f5" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-              <p style="margin: 0;">This email is sent to inform you that <b>{{.Owner}}</b> has invited you to their organization <b>{{.Org_name}}</b> . Please Signup with following link to join. </p>
+              <p style="margin: 0;">Before logging in to the application, please verify your email within 10 minutes by clicking the following Button. Otherwise, you will have to signup again. If you didn't create an account with J2E, you can safely delete this email.</p>
             </td>
           </tr>
           <!-- end copy -->
@@ -151,7 +152,7 @@
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" bgcolor="#232f3e" style="border-radius: 6px;">
-                          <a href="www.google.com" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Signup</a>
+                          <a href="https://71f0-119-73-124-65.ngrok-free.app/organization/verify?token={{.Token}}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Verify Your Email</a>
                         </td>
                       </tr>
                     </table>

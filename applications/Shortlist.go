@@ -58,7 +58,7 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 			usrs = append(usrs, v.U_ID)
 		}
 
-		result2 := db.Conn.Model(&req_skills).Select("skill").Find(&req_skills)
+		result2 := db.Conn.Model(&req_skills).Where("Job_ID = ?", app.Job_ID).Find(&req_skills)
 		if result2.Error != nil {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "Nothing to return")

@@ -1,4 +1,4 @@
-package login
+package organizations
 
 import (
 	"PostJson/db"
@@ -8,14 +8,23 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/xeipuuv/gojsonschema"
 )
 
-// var jwtKey = []byte(os.Getenv("JWT_KEY"))
-
-func Login(w http.ResponseWriter, r *http.Request) {
-	var credentials structures.Users
-	allUsers := []structures.Users{}
+// swagger:route GET /organizations Organization get-organizations
+//
+// Lists all / single organizations
+//
+// This endpoint returns all organizations if no query parameter is passed. However, it returns single organization if you pass its ID as a query parameter
+//
+// responses:
+//  200: Organizations
+//  404: Error
+//  400: Error
+func GetOrganizations(w http.ResponseWriter, r *http.Request) {
+	var credentials structures.Organizations
+	allOrgs := []structures.Organizations{}
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
@@ -43,11 +52,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.Conn.Find(&allUsers)
-	for _, usr := range allUsers {
-		if usr.Email == credentials.Email && usr.Pass == credentials.Pass {
+	db.Conn.Find(&allOrgs)
+	for _, org := range allOrgs {
+		if org.Email == credentials.Email && org.Pass == credentials.Pass {
 
-			if !usr.IsVerified {
+			if !org.IsVerified {
 				w.WriteHeader(http.StatusUnauthorized)
 				fmt.Fprintln(w, "Email not verified!!")
 				return
@@ -81,9 +90,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			// 		// HttpOnly will
 			// 		HttpOnly: true,
 			// 	})
-			json.Marshal(usr)
+			json.Marshal(org)
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(usr)
+			json.NewEncoder(w).Encode(org)
 			return
 		}
 	}

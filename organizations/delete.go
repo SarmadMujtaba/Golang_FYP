@@ -28,7 +28,6 @@ func DeleteOrganizations(w http.ResponseWriter, r *http.Request) {
 	check.Org_ID = r.URL.Query().Get("id")
 	if len(check.Org_ID) > 0 {
 		// populating add for validation
-		check.U_ID = check.Org_ID
 		validate := validator.New()
 		err := validate.Struct(check)
 		if err != nil {

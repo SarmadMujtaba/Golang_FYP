@@ -57,8 +57,8 @@ func Handler() {
 	route.HandleFunc("/users", authentication.IsAuthorized(users.GetUsers)).Methods(http.MethodGet)
 	route.HandleFunc("/signup", authentication.VerifyEmail(login.Signup)).Methods(http.MethodPost)
 	route.HandleFunc("/users", authentication.IsAuthorized(users.DeleteUsers)).Methods(http.MethodDelete)
-	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.GetOrganizations)).Methods(http.MethodGet)
-	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.PostOrganizations)).Methods(http.MethodPost)
+	route.HandleFunc("/organizations/login", authentication.IsAuthorized(organizations.GetOrganizations)).Methods(http.MethodPost)
+	route.HandleFunc("/organizations/signup", authentication.IsAuthorized(organizations.PostOrganizations)).Methods(http.MethodPost)
 	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.DeleteOrganizations)).Methods(http.MethodDelete)
 	route.HandleFunc("/invite", authentication.IsAuthorized(invites.GetInvites)).Methods(http.MethodGet)
 	route.HandleFunc("/invite", authentication.IsAuthorized(invites.PostInvite)).Methods(http.MethodPost)
@@ -78,6 +78,7 @@ func Handler() {
 	route.HandleFunc("/application", authentication.IsAuthorized(applications.GetApplications)).Methods(http.MethodGet)
 	route.HandleFunc("/application", authentication.IsAuthorized(applications.DeleteApplications)).Methods(http.MethodDelete)
 	route.HandleFunc("/verify", authentication.Verify).Methods(http.MethodGet)
+	route.HandleFunc("/organization/verify", authentication.VerifyOrg).Methods(http.MethodGet)
 
 	route.HandleFunc("/upload", applications.FileUpload).Methods(http.MethodPost)
 

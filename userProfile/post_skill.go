@@ -27,7 +27,7 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 	var skill structures.Skills
 	var user []structures.Users
 	var skills []structures.Skills
-	var Skills []string
+	// var Skills []string
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
 	var dataToCompare map[string]string
@@ -82,12 +82,7 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// creating json array of skills
-	for _, v := range skills {
-		Skills = append(Skills, v.Skill)
-	}
-
-	data, _ := json.Marshal(Skills)
+	data, _ := json.Marshal(dataToCompare["skill"])
 
 	// change url with python's url later. It is Path parameter after url
 	posturl := "http://host.docker.internal:8000/skills/" + skill.U_ID

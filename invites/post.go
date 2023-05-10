@@ -73,7 +73,7 @@ func PostInvite(w http.ResponseWriter, r *http.Request) {
 	var add structures.Invites
 	var invites []structures.Invites
 	var users []structures.Users
-	var owners []structures.Organizations
+	// var owners []structures.Organizations
 	access := false
 	ownerFound := false
 	userFound := false
@@ -147,23 +147,23 @@ func PostInvite(w http.ResponseWriter, r *http.Request) {
 		// }
 	}
 
-	db.Conn.Find(&owners)
-	for _, onr := range owners {
-		if onr.U_ID == add.U_ID {
-			ownerFound = true
-			if onr.Org_ID == add.Org_ID {
-				access = true
-				result := db.Conn.Create(&add)
-				if result.Error != nil {
-					w.WriteHeader(400)
-					fmt.Fprintln(w, "Could not add invite!!")
-				} else {
-					w.WriteHeader(201)
-					fmt.Fprintf(w, "Invite Added!!")
-				}
-			}
-		}
-	}
+	// db.Conn.Find(&owners)
+	// for _, onr := range owners {
+	// 	if onr.U_ID == add.U_ID {
+	// 		ownerFound = true
+	// 		if onr.Org_ID == add.Org_ID {
+	// 			access = true
+	// 			result := db.Conn.Create(&add)
+	// 			if result.Error != nil {
+	// 				w.WriteHeader(400)
+	// 				fmt.Fprintln(w, "Could not add invite!!")
+	// 			} else {
+	// 				w.WriteHeader(201)
+	// 				fmt.Fprintf(w, "Invite Added!!")
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	if !access {
 		w.WriteHeader(400)

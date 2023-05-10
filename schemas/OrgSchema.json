@@ -10,10 +10,13 @@
         "website": {
           "type": "string"
         },
-        "user_id": {
-            "type": "string"
-          }
+        "email": {
+          "type": "string"
+        },
+        "pass": {
+          "type": "string"
+        }
     },
     "additionalProperties": false,
-    "required": ["name", "about", "website", "user_id"]
+    "required": ["name", "about", "website", "email", "pass"]
 }

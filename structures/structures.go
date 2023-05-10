@@ -25,12 +25,14 @@ type ErrorNotFound struct {
 
 // swagger:model Organizations
 type Organizations struct {
-	Org_ID    string `json:"id" validate:"uuid" gorm:"primaryKey;autoIncrement:false"`
-	Name      string `json:"name"`
-	About     string `json:"about"`
-	Website   string `json:"website"`
-	U_ID      string `json:"user_id" validate:"uuid"`
-	CreatedAt time.Time
+	Org_ID     string `json:"id" validate:"uuid" gorm:"primaryKey;autoIncrement:false"`
+	Name       string `json:"name"`
+	About      string `json:"about"`
+	Website    string `json:"website"`
+	Email      string `json:"email"`
+	Pass       string `json:"pass" validate:"alphanum"`
+	IsVerified bool
+	CreatedAt  time.Time
 }
 
 // swagger:model Memberships
