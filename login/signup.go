@@ -43,6 +43,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	err := validate.Struct(add)
 	if err != nil {
 		w.WriteHeader(400)
+		fmt.Println("msla-1")
 		fmt.Fprintf(w, "Incorrect input!!")
 		return
 	}
@@ -59,6 +60,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	if !result.Valid() {
 		w.WriteHeader(400)
+		fmt.Println("msla-2")
 		fmt.Fprintf(w, "Json Object is not valid. see errors :\n")
 		for _, desc := range result.Errors() {
 			fmt.Fprintln(w, desc.Description())

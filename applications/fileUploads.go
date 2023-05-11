@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"gopkg.in/go-playground/validator.v9"
 )
 
 type test struct {
@@ -20,16 +18,18 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	var app structures.Applications
 
 	app.U_ID = r.URL.Query().Get("user_id")
+	fmt.Println(app.U_ID)
 	if len(app.U_ID) > 0 {
 		// populating add for validation
 		app.Job_ID = app.U_ID
-		validate := validator.New()
-		err := validate.Struct(app)
-		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, "Incorrect input!!")
-			return
-		}
+		// validate := validator.New()
+		// err := validate.Struct(app)
+		// if err != nil {
+		// 	fmt.Println("invalid")
+		// 	w.WriteHeader(400)
+		// 	fmt.Fprintf(w, "Incorrect input!!")
+		// 	return
+		// }
 
 		// Parse our multipart form, 5 << 10 specifies a maximum. upload of 5 MB files.
 		r.ParseMultipartForm(5 << 10)
@@ -107,6 +107,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Successfully Uploaded File\n")
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println("validation failed")
 		fmt.Fprintf(w, "Please provide user ID with file.")
 	}
 }
