@@ -11,8 +11,8 @@ import (
 var Conn *gorm.DB
 
 func Connection() {
-	var cats []structures.Category
-	var cat structures.Category
+	// var cats []structures.Category
+	// var cat structures.Category
 	const (
 		host   = "localhost"
 		port   = 3306
@@ -34,9 +34,9 @@ func Connection() {
 
 	// Migrating structures to Mysql tables
 	Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
-	Conn.AutoMigrate(&structures.Category{}, &structures.Jobs{}, &structures.RequiredSkills{})
+	// Conn.AutoMigrate(&structures.Category{}, &structures.Jobs{}, &structures.RequiredSkills{})
 	Conn.AutoMigrate(&structures.Experience{}, &structures.Skills{}, &structures.Profile{}, structures.Applications{})
-	Conn.AutoMigrate(&structures.Invites{})
+	Conn.AutoMigrate(&structures.Invites{}, &structures.Jobs{})
 
 	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
 
@@ -46,7 +46,7 @@ func Connection() {
 	Conn.Model(&structures.Memberships{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
 
 	Conn.Model(&structures.Jobs{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
-	Conn.Model(&structures.Jobs{}).AddForeignKey("cat_id", "categories(id)", "CASCADE", "CASCADE")
+	// Conn.Model(&structures.Jobs{}).AddForeignKey("cat_id", "categories(id)", "CASCADE", "CASCADE")
 	Conn.Model(&structures.RequiredSkills{}).AddForeignKey("job_id", "jobs(id)", "CASCADE", "CASCADE")
 
 	Conn.Model(&structures.Experience{}).AddForeignKey("u_id", "users(id)", "CASCADE", "CASCADE")
@@ -60,18 +60,18 @@ func Connection() {
 	Conn.Model(&structures.Invites{}).AddForeignKey("org_id", "organizations(org_id)", "CASCADE", "CASCADE")
 
 	// Populating categories for the First time execution
-	Conn.Find(&cats)
-	if len(cats) == 0 {
-		cat.ID = "1"
-		cat.Type = "Full-Time"
-		Conn.Create(&cat)
-		cat.ID = "2"
-		cat.Type = "Part-Time"
-		Conn.Create(&cat)
-		cat.ID = "3"
-		cat.Type = "Internship"
-		Conn.Create(&cat)
-	}
+	// Conn.Find(&cats)
+	// if len(cats) == 0 {
+	// 	cat.ID = "1"
+	// 	cat.Type = "Full-Time"
+	// 	Conn.Create(&cat)
+	// 	cat.ID = "2"
+	// 	cat.Type = "Part-Time"
+	// 	Conn.Create(&cat)
+	// 	cat.ID = "3"
+	// 	cat.Type = "Internship"
+	// 	Conn.Create(&cat)
+	// }
 
 	fmt.Println("Connection Established...")
 }

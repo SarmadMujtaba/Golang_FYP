@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/go-playground/validator.v9"
@@ -35,9 +36,13 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	profile.U_ID = dataToCompare["user_id"]
+	profile.U_ID = strings.ReplaceAll(dataToCompare["user_id"], `"`, "")
 	profile.Education = dataToCompare["education"]
 	profile.Phone = dataToCompare["phone"]
+
+	fmt.Println(profile.U_ID)
+	fmt.Println(profile.Education)
+	fmt.Println(profile.Phone)
 
 	validate := validator.New()
 	err := validate.Struct(profile)

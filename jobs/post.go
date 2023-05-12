@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 // swagger:route POST /jobs Jobs post-job
@@ -33,21 +33,21 @@ func PostJob(w http.ResponseWriter, r *http.Request) {
 
 	id := uuid.New()
 	add.ID = id.String()
-	add.Org_id = dataToCompare["org_id"]
-	add.Cat_ID = dataToCompare["cat_id"]
+	add.Org_id = strings.ReplaceAll(dataToCompare["org_id"], `"`, "")
+	add.Category = dataToCompare["category"]
 	add.Designation = dataToCompare["designation"]
 	add.Description = dataToCompare["description"]
 	add.Location = dataToCompare["location"]
 	add.Salary = dataToCompare["salary"]
 
 	// input validation
-	validate := validator.New()
-	err := validate.Struct(add)
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect input!!")
-		return
-	}
+	// validate := validator.New()
+	// err := validate.Struct(add)
+	// if err != nil {
+	// 	w.WriteHeader(400)
+	// 	fmt.Fprintf(w, "Incorrect input!!")
+	// 	return
+	// }
 
 	// validating json schema
 	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/JobSchema.json")
@@ -71,7 +71,9 @@ func PostJob(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
 	} else {
-		w.WriteHeader(201)
-		fmt.Fprintf(w, "Job Created!!")
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(add)
 	}
 }

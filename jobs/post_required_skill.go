@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/go-playground/validator.v9"
@@ -30,7 +31,7 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	skill.Job_ID = dataToCompare["job_id"]
+	skill.Job_ID = strings.ReplaceAll(dataToCompare["job_id"], `"`, "")
 	skill.Skill = dataToCompare["skill"]
 
 	validate := validator.New()

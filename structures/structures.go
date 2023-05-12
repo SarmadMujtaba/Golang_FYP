@@ -47,7 +47,7 @@ type Memberships struct {
 type Jobs struct {
 	ID          string `json:"id" validate:"uuid" gorm:"primaryKey;autoIncrement:false"`
 	Org_id      string `json:"org_id" validate:"uuid"`
-	Cat_ID      string `json:"cat_id"`
+	Category    string `json:"category"`
 	Designation string `json:"designation"`
 	Description string `json:"description"`
 	Location    string `json:"location"`
@@ -56,10 +56,10 @@ type Jobs struct {
 }
 
 // swagger:model Category
-type Category struct {
-	ID   string `json:"id" gorm:"primaryKey;autoIncrement:false"`
-	Type string `json:"type"`
-}
+// type Category struct {
+// 	ID   string `json:"id" gorm:"primaryKey;autoIncrement:false"`
+// 	Type string `json:"type"`
+// }
 
 // swagger:model RequiredSkills
 type RequiredSkills struct {

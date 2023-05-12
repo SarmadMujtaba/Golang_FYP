@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 // swagger:route POST /profile/experience Profile add-experience
@@ -30,16 +30,19 @@ func AddExperience(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	exp.U_ID = dataToCompare["user_id"]
+	exp.U_ID = strings.ReplaceAll(dataToCompare["user_id"], `"`, "")
 	exp.Experience = dataToCompare["experience"]
 
-	validate := validator.New()
-	err := validate.Struct(exp)
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Input")
-		return
-	}
+	fmt.Println(exp.U_ID)
+	fmt.Println(exp.Experience)
+
+	// validate := validator.New()
+	// err := validate.Struct(exp)
+	// if err != nil {
+	// 	w.WriteHeader(400)
+	// 	fmt.Fprintf(w, "Incorrect Input")
+	// 	return
+	// }
 
 	// validating json schema
 	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ExperienceSchema.json")

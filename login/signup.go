@@ -3,6 +3,7 @@ package login
 import (
 	"PostJson/db"
 	"PostJson/structures"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -83,6 +84,9 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db.Conn.Create(&add)
-	w.WriteHeader(201)
-	fmt.Fprintf(w, "User inserted, please visit your email for verification!!")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(add)
+
+	// fmt.Fprintf(w, "User inserted, please visit your email for verification!!")
 }

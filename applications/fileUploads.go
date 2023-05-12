@@ -1,12 +1,12 @@
 package applications
 
 import (
-	"PostJson/structures"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type test struct {
@@ -15,13 +15,14 @@ type test struct {
 
 func FileUpload(w http.ResponseWriter, r *http.Request) {
 
-	var app structures.Applications
+	// var app structures.Applications
 
-	app.U_ID = r.URL.Query().Get("user_id")
-	fmt.Println(app.U_ID)
-	if len(app.U_ID) > 0 {
+	user := r.URL.Query().Get("user_id")
+	strings.ReplaceAll(user, `"`, "")
+	fmt.Println(user)
+	if len(user) > 0 {
 		// populating add for validation
-		app.Job_ID = app.U_ID
+		// app.Job_ID = app.U_ID
 		// validate := validator.New()
 		// err := validate.Struct(app)
 		// if err != nil {
@@ -62,7 +63,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 
 		// Create a temporary file within our 'FYP_Resumes' directory that follows
 		// a particular naming pattern (created directory manually)
-		str := app.U_ID + "_" + "*.pdf"
+		str := user + "_" + "*.pdf"
 
 		tempFile, err := ioutil.TempFile("/app/Resumes", str)
 		if err != nil {
@@ -80,7 +81,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		tempFile.Write(fileBytes)
 
 		// sending file name to Python
-		data, _ := json.Marshal(app.U_ID)
+		data, _ := json.Marshal(user)
 		// change url with python's url later. It is Path parameter after url
 		posturl := "http://host.docker.internal:8000/extract"
 

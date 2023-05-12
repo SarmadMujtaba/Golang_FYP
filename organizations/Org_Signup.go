@@ -104,6 +104,8 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 func SendEmail(email string) {
 	expirationTime := time.Now().Add(time.Minute * 30)
 
+	fmt.Println(email)
+
 	claims := &structures.Claims{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
@@ -152,4 +154,7 @@ func SendEmail(email string) {
 
 	// Sending email.
 	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
+	if err != nil {
+		fmt.Println("Sending Email Failed!!")
+	}
 }
