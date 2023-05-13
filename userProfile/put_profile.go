@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 // swagger:route PUT /profile Profile post-profile
@@ -44,13 +43,13 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(profile.Education)
 	fmt.Println(profile.Phone)
 
-	validate := validator.New()
-	err := validate.Struct(profile)
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Input")
-		return
-	}
+	// validate := validator.New()
+	// err := validate.Struct(profile)
+	// if err != nil {
+	// 	w.WriteHeader(400)
+	// 	fmt.Fprintf(w, "Incorrect Input")
+	// 	return
+	// }
 
 	// validating json schema
 	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ProfileSchema.json")

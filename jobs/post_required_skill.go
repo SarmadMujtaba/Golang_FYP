@@ -82,17 +82,6 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Could not add Required skill!!")
 			return
 		}
-
-		// add the current skill to database
-		jobSkill := structures.RequiredSkills{
-			Job_ID: jobID,
-			Skill:  v,
-		}
-		if err := db.Conn.Create(&jobSkill).Error; err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, "Could not add job skill to database!!")
-			return
-		}
 	}
 
 	w.WriteHeader(201)
