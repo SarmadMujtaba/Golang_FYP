@@ -60,6 +60,8 @@ func Handler() {
 	route.HandleFunc("/organizations/login", authentication.IsAuthorized(organizations.GetOrganizations)).Methods(http.MethodPost)
 	route.HandleFunc("/organizations/signup", authentication.IsAuthorized(organizations.PostOrganizations)).Methods(http.MethodPost)
 	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.DeleteOrganizations)).Methods(http.MethodDelete)
+	route.HandleFunc("/organizations/profile", organizations.UpdateOrg).Methods(http.MethodPost)
+	route.HandleFunc("/organizations/profile", organizations.GetOrg).Methods(http.MethodGet)
 	route.HandleFunc("/invite", authentication.IsAuthorized(invites.GetInvites)).Methods(http.MethodGet)
 	route.HandleFunc("/invite", authentication.IsAuthorized(invites.PostInvite)).Methods(http.MethodPost)
 	route.HandleFunc("/members", authentication.IsAuthorized(members.GetMembers)).Methods(http.MethodGet)

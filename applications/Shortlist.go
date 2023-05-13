@@ -7,8 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"gopkg.in/go-playground/validator.v9"
+	"strings"
 )
 
 // swagger:model Applications
@@ -33,17 +32,17 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	// json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	app.Job_ID = r.URL.Query().Get("job_id")
+	app.Job_ID = strings.ReplaceAll(r.URL.Query().Get("job_id"), `"`, "")
 	if len(app.Job_ID) > 0 {
 		// populating add for validation
 		app.U_ID = app.Job_ID
-		validate := validator.New()
-		err := validate.Struct(app)
-		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, "Incorrect input!!")
-			return
-		}
+		// validate := validator.New()
+		// err := validate.Struct(app)
+		// if err != nil {
+		// 	w.WriteHeader(400)
+		// 	fmt.Fprintf(w, "Incorrect input!!")
+		// 	return
+		// }
 
 		// selecting U_ID only to be shortlisted
 		result := db.Conn.Model(&apps).Where("Job_ID = ?", app.Job_ID).Scan(&t)

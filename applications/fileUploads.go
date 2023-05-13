@@ -17,8 +17,8 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 
 	// var app structures.Applications
 
-	user := r.URL.Query().Get("user_id")
-	strings.ReplaceAll(user, `"`, "")
+	user := strings.ReplaceAll(r.URL.Query().Get("user_id"), `"`, "")
+
 	fmt.Println(user)
 	if len(user) > 0 {
 		// populating add for validation
