@@ -3,6 +3,7 @@ package userprofile
 import (
 	"PostJson/db"
 	"PostJson/structures"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -83,9 +84,30 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	posturl := "http://host.docker.internal:8000/skills/" + strings.ReplaceAll(userID, `"`, "")
+	jsonData, _ := json.Marshal(skills)
+	go SendRequest(posturl, jsonData)
 
 	w.WriteHeader(201)
 	fmt.Fprintf(w, "Skills added!!")
+}
+
+func SendRequest(url string, data []byte) {
+	r, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	r.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(r)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(resp.StatusCode)
 }
 
 // package userprofile

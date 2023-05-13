@@ -31,6 +31,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -45,6 +46,14 @@ func main() {
 
 func Handler() {
 	route := mux.NewRouter()
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"*"},
+		ExposedHeaders: []string{"Link"},
+		MaxAge:         86400, // 24 hours
+	})
 
 	// documentation for developers
 	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
@@ -88,6 +97,8 @@ func Handler() {
 
 	route.HandleFunc("/application/update", applications.UpdateStatus).Methods(http.MethodPost)
 
-	log.Fatal(http.ListenAndServe(":5020", route))
+	handler := c.Handler(route)
+
+	log.Fatal(http.ListenAndServe(":5020", handler))
 
 }
