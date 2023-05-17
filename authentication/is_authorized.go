@@ -70,7 +70,9 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 		// 			Expires:  expirationTime,
 		// 		})
 		// }
-
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
 		handler.ServeHTTP(w, r)
 	}
 }

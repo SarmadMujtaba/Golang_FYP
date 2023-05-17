@@ -11,6 +11,7 @@ import (
 	"net/smtp"
 	"os"
 	"strings"
+	"sync"
 	"text/template"
 	"time"
 
@@ -34,6 +35,10 @@ import (
 var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 func PostOrganizations(w http.ResponseWriter, r *http.Request) {
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	var add structures.Organizations
 	var orgs []structures.Organizations
 	// var member structures.Memberships
@@ -95,9 +100,13 @@ func PostOrganizations(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Could not enter record!!")
 		return
 	} else {
-		go SendEmail(dataToCompare["email"])
+		go func() {
+			SendEmail(dataToCompare["email"])
+			wg.Done()
+		}()
 		w.WriteHeader(201)
 		fmt.Fprintln(w, "Organization inserted, please visit your email for verification!!")
+		wg.Wait()
 	}
 }
 

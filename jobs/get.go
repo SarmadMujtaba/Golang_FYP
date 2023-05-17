@@ -23,6 +23,7 @@ type Resp struct {
 }
 
 func GetJobs(w http.ResponseWriter, r *http.Request) {
+
 	var jobs []structures.Jobs
 	var job structures.Jobs
 	var resp []Resp

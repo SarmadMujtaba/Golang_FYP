@@ -52,7 +52,7 @@ func Handler() {
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"*"},
 		ExposedHeaders: []string{"Link"},
-		MaxAge:         86400, // 24 hours
+		MaxAge:         86400, // 24 hoursz
 	})
 
 	// documentation for developers
