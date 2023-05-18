@@ -84,7 +84,7 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	posturl := "http://host.docker.internal:8000/skills/" + strings.ReplaceAll(userID, `"`, "")
+	posturl := "http://34.93.204.130:8000/skills/" + strings.ReplaceAll(userID, `"`, "")
 	jsonData, _ := json.Marshal(skills)
 	go SendRequest(posturl, jsonData)
 

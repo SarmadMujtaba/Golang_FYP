@@ -83,7 +83,7 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal(data, &dataToCompare)
 
 		// change url with python's url later. It is Path parameter after url
-		posturl := "http://host.docker.internal:8000/" + app.Job_ID
+		posturl := "http://34.93.204.130:8000/" + app.Job_ID
 
 		// concurently sending request to python
 		go SendRequest(posturl, encjson)

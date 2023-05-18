@@ -56,8 +56,8 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Sender data.
-		from := "191403@students.au.edu.pk"
-		password := "qasim03080340"
+		from := "19387@students.au.edu.pk"
+		password := "DummyUniID"
 
 		receiver := strings.ReplaceAll(dataToCompare["email"], " ", "")
 		// Receiver email address.
