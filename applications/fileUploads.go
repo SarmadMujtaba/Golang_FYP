@@ -83,7 +83,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		// sending file name to Python
 		data, _ := json.Marshal(user)
 		// change url with python's url later. It is Path parameter after url
-		posturl := "http://host.docker.internal:8000/extract"
+		posturl := "http://34.93.204.130:8000/extract"
 
 		r, err := http.NewRequest("POST", posturl, bytes.NewBuffer(data))
 		if err != nil {

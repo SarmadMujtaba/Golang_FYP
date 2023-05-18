@@ -36,7 +36,7 @@ func Connection() {
 	Conn.AutoMigrate(&structures.Users{}, &structures.Organizations{}, &structures.Memberships{})
 	// Conn.AutoMigrate(&structures.Category{}, &structures.Jobs{}, &structures.RequiredSkills{})
 	Conn.AutoMigrate(&structures.Experience{}, &structures.Skills{}, &structures.Profile{}, structures.Applications{})
-	Conn.AutoMigrate(&structures.Invites{}, &structures.Jobs{})
+	Conn.AutoMigrate(&structures.Invites{}, &structures.Jobs{}, &structures.RequiredSkills{})
 
 	Conn.Model(&structures.Organizations{}).AddIndex("org_id", "org_id")
 
