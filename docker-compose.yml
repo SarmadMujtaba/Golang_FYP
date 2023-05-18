@@ -2,7 +2,7 @@ version: '3.1'
 services:
   db:
     image: mysql
-    container_name: db
+    container_name:  "db"
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
@@ -12,26 +12,34 @@ services:
       MYSQL_DATABASE: "db"
     ports:
       - "3307:3306"
+    # once the db container's health is ready, then the go_api container will start. (order of execution : db -> go_api)
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pDummySQL786"]
-      interval: 2s
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-ppass"]
+      interval: 1s
       timeout: 3s
       retries: 20
-
+  
   api:
-    container_name: go_api
+    container_name:  "go_api"
+    # we want to use the image which is build from our Dockerfile
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "5020:5020"
-    depends_on:
+  
+    # we are depending on the mysql's container to be ready before running go_api.
+    depends_on:       
       db:
         condition: service_healthy
-    environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=DummySQL786
-      - DB_NAME=db
+
+    # connection docker container with host-port (of python).
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+ 
     volumes:
-      - /home/g191387/Resumes:/app/Resumes
+    - /home/g191387/Resumes:/app/Resumes
+    # bind mount for file uploads - folder on host : folder on container
+      # - /home/sarmad/Desktop/FYP_Resumes:/app/Resumes
+
+
