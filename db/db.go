@@ -4,6 +4,7 @@ import (
 	"PostJson/structures"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -25,11 +26,14 @@ func Connection() {
 	// connString := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True", user, password, host, port, dbname)
 
 	connString := fmt.Sprintf("%s:%s@tcp(db)/%s?charset=utf8&parseTime=True", user, password, dbname)
-	fmt.Println(connString)
-	var err error
-	Conn, err = gorm.Open("mysql", connString)
-	if err != nil {
-		panic(err)
+	for {
+		var err error
+		Conn, err = gorm.Open("mysql", connString)
+		if err == nil {
+			break
+		}
+		fmt.Println("Failed to connect to the database. Retrying...")
+		time.Sleep(1 * time.Second)
 	}
 
 	// Migrating structures to Mysql tables
