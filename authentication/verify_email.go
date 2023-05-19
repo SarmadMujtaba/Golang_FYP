@@ -38,7 +38,7 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// JWT token generation
-		expirationTime := time.Now().Add(time.Minute * 3)
+		expirationTime := time.Now().Add(time.Minute * 30)
 
 		claims := &structures.Claims{
 			Email: dataToCompare["email"],
@@ -56,8 +56,8 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Sender data.
-		from := "191403@students.au.edu.pk"
-		password := "qasim03080340"
+		from := "191387@students.au.edu.pk"
+		password := "DummyUniID"
 
 		receiver := strings.ReplaceAll(dataToCompare["email"], " ", "")
 		// Receiver email address.

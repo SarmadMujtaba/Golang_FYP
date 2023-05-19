@@ -132,7 +132,7 @@ func SendEmail(email string) {
 
 	// Sender data.
 	from := "191387@students.au.edu.pk"
-	password := os.Getenv("EMAIL_PASSWORD")
+	password := "DummyUniID"
 
 	receiver := strings.ReplaceAll(email, " ", "")
 	// Receiver email address.
