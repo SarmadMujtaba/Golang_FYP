@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: "DummySQL786"
       MYSQL_ROOT_USER: "root"
       MYSQL_PASSWORD: "DummySQL786"
-      MYSQL_DATABASE: "db"
+      MYSQL_DATABASE: "godb"
     ports:
       - "3307:3306"
     # once the db container's health is ready, then the go_api container will start. (order of execution : db -> go_api)
