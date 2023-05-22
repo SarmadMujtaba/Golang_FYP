@@ -86,14 +86,8 @@ func AddSkill(w http.ResponseWriter, r *http.Request) {
 	}
 	posturl := "http://34.93.204.130:8000/skills/" + strings.ReplaceAll(userID, `"`, "")
 	jsonData, _ := json.Marshal(skills)
-	go SendRequest(posturl, jsonData)
 
-	w.WriteHeader(201)
-	fmt.Fprintf(w, "Skills added!!")
-}
-
-func SendRequest(url string, data []byte) {
-	r, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	r, err := http.NewRequest("POST", posturl, bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -108,6 +102,9 @@ func SendRequest(url string, data []byte) {
 		return
 	}
 	fmt.Println(resp.StatusCode)
+
+	w.WriteHeader(201)
+	fmt.Fprintf(w, "Skills added!!")
 }
 
 // package userprofile
