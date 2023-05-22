@@ -86,27 +86,24 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 		posturl := "http://34.93.204.130:8000/" + app.Job_ID
 
 		// concurently sending request to python
-		go SendRequest(posturl, encjson)
+
+		r, err := http.NewRequest("POST", posturl, bytes.NewBuffer(encjson))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		r.Header.Add("Content-Type", "application/json")
+
+		client := &http.Client{}
+		resp, err := client.Do(r)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(resp.StatusCode)
 
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, "Shortlisting started!!")
 	}
-}
-
-func SendRequest(url string, data []byte) {
-	r, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	r.Header.Add("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(r)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(resp.StatusCode)
 }
