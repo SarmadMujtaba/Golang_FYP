@@ -17,7 +17,7 @@ func Connection() {
 		host   = "localhost"
 		port   = 3306
 		user   = "root"
-		dbname = "go_db"
+		dbname = "db"
 	)
 	password := os.Getenv("DB_PASSWORD")
 
