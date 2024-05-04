@@ -5,6 +5,7 @@ import (
 	"PostJson/structures"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -24,7 +25,7 @@ func DeleteJob(w http.ResponseWriter, r *http.Request) {
 	var jobs []structures.Jobs
 	wrongInput := true
 
-	check.ID = r.URL.Query().Get("id")
+	check.ID = strings.ReplaceAll(r.URL.Query().Get("id"), `"`, "")
 	if len(check.ID) > 0 {
 		// populating add for validation
 		check.Org_id = check.ID

@@ -13,7 +13,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/smtp"
-	"os"
 	"strings"
 	"text/template"
 	"time"
@@ -39,7 +38,7 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// JWT token generation
-		expirationTime := time.Now().Add(time.Minute * 3)
+		expirationTime := time.Now().Add(time.Minute * 30)
 
 		claims := &structures.Claims{
 			Email: dataToCompare["email"],
@@ -58,7 +57,7 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 
 		// Sender data.
 		from := "191387@students.au.edu.pk"
-		password := os.Getenv("EMAIL_PASSWORD")
+		password := "DummyUniID"
 
 		receiver := strings.ReplaceAll(dataToCompare["email"], " ", "")
 		// Receiver email address.
@@ -86,12 +85,14 @@ func VerifyEmail(handler http.HandlerFunc) http.HandlerFunc {
 		}{
 			Token: tokenString,
 		})
+		fmt.Println(to)
 
 		// Sending email.
 		err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
 		if err != nil {
 			w.WriteHeader(http.StatusExpectationFailed)
 			fmt.Fprintln(w, "Sending verification link failed!!")
+			fmt.Println(err)
 		} else {
 			// Sending context of User data (JSON object) to next handler
 			ctx := context.Background()

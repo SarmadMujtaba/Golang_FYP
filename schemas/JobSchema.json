@@ -4,7 +4,7 @@
         "org_id": {
           "type": "string"
         },
-        "cat_id": {
+        "category": {
           "type": "string"
         },
         "designation": {
@@ -21,5 +21,5 @@
         }
     },
     "additionalProperties": false,
-    "required": ["org_id", "cat_id", "designation", "description", "location", "salary"]
+    "required": ["org_id", "category", "designation", "description", "location", "salary"]
 }

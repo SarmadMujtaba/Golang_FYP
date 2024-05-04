@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/go-playground/validator.v9"
+	"strings"
 )
 
 // swagger:route POST /jobs/skills Jobs post-RequiredSkill
@@ -23,53 +21,69 @@ import (
 //  400: Error
 
 func AddSkill(w http.ResponseWriter, r *http.Request) {
-	var skill structures.RequiredSkills
 	var jobs []structures.Jobs
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
-	var dataToCompare map[string]string
+	var dataToCompare map[string]interface{}
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	skill.Job_ID = dataToCompare["job_id"]
-	skill.Skill = dataToCompare["skill"]
+	jobID := dataToCompare["job_id"].(string)
 
-	validate := validator.New()
-	err := validate.Struct(skill)
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Input")
-		return
+	var skills []string
+	skillsRaw := dataToCompare["skills"].([]interface{})
+	for _, s := range skillsRaw {
+		skills = append(skills, s.(string))
 	}
 
-	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ReqSkillSchema.json")
-	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+	fmt.Println(jobID, skills)
 
-	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	if err != nil {
-		panic(err.Error())
-	}
-	if !res.Valid() {
-		w.WriteHeader(400)
-		for _, desc := range res.Errors() {
-			fmt.Fprintln(w, desc.Description())
+	for _, v := range skills {
+		skill := structures.RequiredSkills{
+			Job_ID: strings.ReplaceAll(jobID, `"`, ""),
+			Skill:  v,
 		}
-		return
+		fmt.Println(skill.Job_ID)
+		fmt.Println(skill.Skill)
+
+		// validate := validator.New()
+		// err := validate.Struct(skill)
+		// if err != nil {
+		//  w.WriteHeader(400)
+		//  fmt.Fprintf(w, "Incorrect Input")
+		//  return
+		// }
+
+		// validating json schema
+		// schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ReqSkillSchema.json")
+		// documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+
+		// res, err := gojsonschema.Validate(schemaLoader, documentLoader)
+		// if err != nil {
+		// 	panic(err.Error())
+		// }
+		// if !res.Valid() {
+		// 	w.WriteHeader(400)
+		// 	for _, desc := range res.Errors() {
+		// 		fmt.Fprintln(w, desc.Description())
+		// 	}
+		// 	return
+		// }
+
+		db.Conn.Where("ID = ?", skill.Job_ID).Find(&jobs)
+		if len(jobs) == 0 {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "job does not exist!!")
+			return
+		}
+
+		result := db.Conn.Create(&skill)
+		if result.Error != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Could not add Required skill!!")
+			return
+		}
 	}
 
-	db.Conn.Where("ID = ?", skill.Job_ID).Find(&jobs)
-	if len(jobs) == 0 {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "job does not exist!!")
-		return
-	}
-
-	result := db.Conn.Create(&skill)
-	if result.Error != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Could not add Required skill!!")
-		return
-	}
 	w.WriteHeader(201)
-	fmt.Fprintf(w, "Required Skill added!!")
+	fmt.Fprintf(w, "Required Skills added!!")
 }

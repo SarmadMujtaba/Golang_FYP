@@ -1,14 +1,12 @@
 package applications
 
 import (
-	"PostJson/structures"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"gopkg.in/go-playground/validator.v9"
+	"strings"
 )
 
 type test struct {
@@ -17,19 +15,22 @@ type test struct {
 
 func FileUpload(w http.ResponseWriter, r *http.Request) {
 
-	var app structures.Applications
+	// var app structures.Applications
 
-	app.U_ID = r.URL.Query().Get("user_id")
-	if len(app.U_ID) > 0 {
+	user := strings.ReplaceAll(r.URL.Query().Get("user_id"), `"`, "")
+
+	fmt.Println(user)
+	if len(user) > 0 {
 		// populating add for validation
-		app.Job_ID = app.U_ID
-		validate := validator.New()
-		err := validate.Struct(app)
-		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, "Incorrect input!!")
-			return
-		}
+		// app.Job_ID = app.U_ID
+		// validate := validator.New()
+		// err := validate.Struct(app)
+		// if err != nil {
+		// 	fmt.Println("invalid")
+		// 	w.WriteHeader(400)
+		// 	fmt.Fprintf(w, "Incorrect input!!")
+		// 	return
+		// }
 
 		// Parse our multipart form, 5 << 10 specifies a maximum. upload of 5 MB files.
 		r.ParseMultipartForm(5 << 10)
@@ -62,7 +63,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 
 		// Create a temporary file within our 'FYP_Resumes' directory that follows
 		// a particular naming pattern (created directory manually)
-		str := app.U_ID + "_" + "*.pdf"
+		str := user + "_" + "*.pdf"
 
 		tempFile, err := ioutil.TempFile("/app/Resumes", str)
 		if err != nil {
@@ -80,9 +81,9 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		tempFile.Write(fileBytes)
 
 		// sending file name to Python
-		data, _ := json.Marshal(app.U_ID)
+		data, _ := json.Marshal(user)
 		// change url with python's url later. It is Path parameter after url
-		posturl := "http://host.docker.internal:8000/extract"
+		posturl := "http://34.93.204.130:8000/extract"
 
 		r, err := http.NewRequest("POST", posturl, bytes.NewBuffer(data))
 		if err != nil {
@@ -107,6 +108,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Successfully Uploaded File\n")
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println("validation failed")
 		fmt.Fprintf(w, "Please provide user ID with file.")
 	}
 }

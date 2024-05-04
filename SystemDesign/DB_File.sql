@@ -54,7 +54,7 @@ FOREIGN KEY (org_id) REFERENCES organizations(org_id)
 
 select * from memberships;
 
-insert into memberships values("a", "b", "c");
+insert into users values("test", "srmdmjtba@gmail.com", "test");
 
 
 

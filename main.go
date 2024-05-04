@@ -31,6 +31,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -46,6 +47,14 @@ func main() {
 func Handler() {
 	route := mux.NewRouter()
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"*"},
+		ExposedHeaders: []string{"Link"},
+		MaxAge:         86400, // 24 hoursz
+	})
+
 	// documentation for developers
 	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
 	sh := middleware.SwaggerUI(opts, nil)
@@ -57,9 +66,11 @@ func Handler() {
 	route.HandleFunc("/users", authentication.IsAuthorized(users.GetUsers)).Methods(http.MethodGet)
 	route.HandleFunc("/signup", authentication.VerifyEmail(login.Signup)).Methods(http.MethodPost)
 	route.HandleFunc("/users", authentication.IsAuthorized(users.DeleteUsers)).Methods(http.MethodDelete)
-	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.GetOrganizations)).Methods(http.MethodGet)
-	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.PostOrganizations)).Methods(http.MethodPost)
+	route.HandleFunc("/organizations/login", authentication.IsAuthorized(organizations.GetOrganizations)).Methods(http.MethodPost)
+	route.HandleFunc("/organizations/signup", authentication.IsAuthorized(organizations.PostOrganizations)).Methods(http.MethodPost)
 	route.HandleFunc("/organizations", authentication.IsAuthorized(organizations.DeleteOrganizations)).Methods(http.MethodDelete)
+	route.HandleFunc("/organizations/profile", organizations.UpdateOrg).Methods(http.MethodPost)
+	route.HandleFunc("/organizations/profile", organizations.GetOrg).Methods(http.MethodGet)
 	route.HandleFunc("/invite", authentication.IsAuthorized(invites.GetInvites)).Methods(http.MethodGet)
 	route.HandleFunc("/invite", authentication.IsAuthorized(invites.PostInvite)).Methods(http.MethodPost)
 	route.HandleFunc("/members", authentication.IsAuthorized(members.GetMembers)).Methods(http.MethodGet)
@@ -78,10 +89,16 @@ func Handler() {
 	route.HandleFunc("/application", authentication.IsAuthorized(applications.GetApplications)).Methods(http.MethodGet)
 	route.HandleFunc("/application", authentication.IsAuthorized(applications.DeleteApplications)).Methods(http.MethodDelete)
 	route.HandleFunc("/verify", authentication.Verify).Methods(http.MethodGet)
+	route.HandleFunc("/organization/verify", authentication.VerifyOrg).Methods(http.MethodGet)
 
 	route.HandleFunc("/upload", applications.FileUpload).Methods(http.MethodPost)
 
 	route.HandleFunc("/application/shortlist", applications.Shortlist).Methods(http.MethodPost)
 
-	log.Fatal(http.ListenAndServe(":5020", route))
+	route.HandleFunc("/application/update", applications.UpdateStatus).Methods(http.MethodPost)
+
+	handler := c.Handler(route)
+
+	log.Fatal(http.ListenAndServe(":5020", handler))
+
 }

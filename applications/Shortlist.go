@@ -7,8 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"gopkg.in/go-playground/validator.v9"
+	"strings"
 )
 
 // swagger:model Applications
@@ -33,17 +32,17 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	// json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	app.Job_ID = r.URL.Query().Get("job_id")
+	app.Job_ID = strings.ReplaceAll(r.URL.Query().Get("job_id"), `"`, "")
 	if len(app.Job_ID) > 0 {
 		// populating add for validation
 		app.U_ID = app.Job_ID
-		validate := validator.New()
-		err := validate.Struct(app)
-		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, "Incorrect input!!")
-			return
-		}
+		// validate := validator.New()
+		// err := validate.Struct(app)
+		// if err != nil {
+		// 	w.WriteHeader(400)
+		// 	fmt.Fprintf(w, "Incorrect input!!")
+		// 	return
+		// }
 
 		// selecting U_ID only to be shortlisted
 		result := db.Conn.Model(&apps).Where("Job_ID = ?", app.Job_ID).Scan(&t)
@@ -58,7 +57,7 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 			usrs = append(usrs, v.U_ID)
 		}
 
-		result2 := db.Conn.Model(&req_skills).Select("skill").Find(&req_skills)
+		result2 := db.Conn.Model(&req_skills).Where("Job_ID = ?", app.Job_ID).Find(&req_skills)
 		if result2.Error != nil {
 			w.WriteHeader(400)
 			fmt.Fprintf(w, "Nothing to return")
@@ -84,30 +83,27 @@ func Shortlist(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal(data, &dataToCompare)
 
 		// change url with python's url later. It is Path parameter after url
-		posturl := "http://host.docker.internal:8000/" + app.Job_ID
+		posturl := "http://34.93.204.130:8000/" + app.Job_ID
 
 		// concurently sending request to python
-		go SendRequest(posturl, encjson)
+
+		r, err := http.NewRequest("POST", posturl, bytes.NewBuffer(encjson))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		r.Header.Add("Content-Type", "application/json")
+
+		client := &http.Client{}
+		resp, err := client.Do(r)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(resp.StatusCode)
 
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, "Shortlisting started!!")
 	}
-}
-
-func SendRequest(url string, data []byte) {
-	r, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	r.Header.Add("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(r)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(resp.StatusCode)
 }

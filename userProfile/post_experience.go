@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/go-playground/validator.v9"
+	"strings"
 )
 
 // swagger:route POST /profile/experience Profile add-experience
@@ -23,53 +21,125 @@ import (
 //  400: Error
 
 func AddExperience(w http.ResponseWriter, r *http.Request) {
-	var exp structures.Experience
+
+	// var exp structures.Experience
 	var user []structures.Users
 
 	dataFromWeb, _ := ioutil.ReadAll(r.Body)
-	var dataToCompare map[string]string
+	var dataToCompare map[string]interface{}
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	exp.U_ID = dataToCompare["user_id"]
-	exp.Experience = dataToCompare["experience"]
+	UserID := dataToCompare["user_id"].(string)
 
-	validate := validator.New()
-	err := validate.Struct(exp)
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Input")
-		return
+	var experiences []string
+	skillsRaw := dataToCompare["experiences"].([]interface{})
+	for _, s := range skillsRaw {
+		experiences = append(experiences, s.(string))
 	}
 
-	// validating json schema
-	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ExperienceSchema.json")
-	documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+	fmt.Println(UserID, experiences)
 
-	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	if err != nil {
-		panic(err.Error())
-	}
-	if !res.Valid() {
-		w.WriteHeader(400)
-		for _, desc := range res.Errors() {
-			fmt.Fprintln(w, desc.Description())
+	for _, v := range experiences {
+		exp := structures.Experience{
+			U_ID:       strings.ReplaceAll(UserID, `"`, ""),
+			Experience: v,
 		}
-		return
+		fmt.Println(exp.U_ID)
+		fmt.Println(exp.Experience)
+
+		// validate := validator.New()
+		// err := validate.Struct(skill)
+		// if err != nil {
+		//  w.WriteHeader(400)
+		//  fmt.Fprintf(w, "Incorrect Input")
+		//  return
+		// }
+
+		// validating json schema
+		// schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ReqSkillSchema.json")
+		// documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+
+		// res, err := gojsonschema.Validate(schemaLoader, documentLoader)
+		// if err != nil {
+		// 	panic(err.Error())
+		// }
+		// if !res.Valid() {
+		// 	w.WriteHeader(400)
+		// 	for _, desc := range res.Errors() {
+		// 		fmt.Fprintln(w, desc.Description())
+		// 	}
+		// 	return
+		// }
+
+		db.Conn.Where("ID = ?", exp.U_ID).Find(&user)
+		if len(user) == 0 {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "User does not exist!!")
+			return
+		}
+
+		result := db.Conn.Create(&exp)
+		if result.Error != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Could not add Required skill!!")
+			return
+		}
 	}
 
-	db.Conn.Where("ID = ?", exp.U_ID).Find(&user)
-	if len(user) == 0 {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "User does not exist!!")
-		return
-	}
-
-	result := db.Conn.Create(&exp)
-	if result.Error != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Could not add experience!!")
-		return
-	}
 	w.WriteHeader(201)
-	fmt.Fprintf(w, "experience added!!")
+	fmt.Fprintf(w, "Experiences added!!")
 }
+
+// var exp structures.Experience
+// var user []structures.Users
+
+// dataFromWeb, _ := ioutil.ReadAll(r.Body)
+// var dataToCompare map[string]string
+// json.Unmarshal(dataFromWeb, &dataToCompare)
+
+// exp.U_ID = strings.ReplaceAll(dataToCompare["user_id"], `"`, "")
+// exp.Experience = dataToCompare["experience"]
+
+// fmt.Println(exp.U_ID)
+// fmt.Println(exp.Experience)
+
+// // validate := validator.New()
+// // err := validate.Struct(exp)
+// // if err != nil {
+// // 	w.WriteHeader(400)
+// // 	fmt.Fprintf(w, "Incorrect Input")
+// // 	return
+// // }
+
+// // validating json schema
+// schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ExperienceSchema.json")
+// documentLoader := gojsonschema.NewGoLoader(dataToCompare)
+
+// res, err := gojsonschema.Validate(schemaLoader, documentLoader)
+// if err != nil {
+// 	panic(err.Error())
+// }
+// if !res.Valid() {
+// 	w.WriteHeader(400)
+// 	for _, desc := range res.Errors() {
+// 		fmt.Fprintln(w, desc.Description())
+// 	}
+// 	return
+// }
+
+// db.Conn.Where("ID = ?", exp.U_ID).Find(&user)
+// if len(user) == 0 {
+// 	w.WriteHeader(400)
+// 	fmt.Fprintf(w, "User does not exist!!")
+// 	return
+// }
+
+// result := db.Conn.Create(&exp)
+// if result.Error != nil {
+// 	w.WriteHeader(400)
+// 	fmt.Fprintf(w, "Could not add experience!!")
+// 	return
+// }
+// w.WriteHeader(201)
+// fmt.Fprintf(w, "experience added!!")
+// }

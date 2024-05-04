@@ -3,6 +3,7 @@ package login
 import (
 	"PostJson/db"
 	"PostJson/structures"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -43,6 +44,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	err := validate.Struct(add)
 	if err != nil {
 		w.WriteHeader(400)
+		fmt.Println("msla-1")
 		fmt.Fprintf(w, "Incorrect input!!")
 		return
 	}
@@ -59,6 +61,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	if !result.Valid() {
 		w.WriteHeader(400)
+		fmt.Println("msla-2")
 		fmt.Fprintf(w, "Json Object is not valid. see errors :\n")
 		for _, desc := range result.Errors() {
 			fmt.Fprintln(w, desc.Description())
@@ -81,6 +84,9 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db.Conn.Create(&add)
-	w.WriteHeader(201)
-	fmt.Fprintf(w, "User inserted, please visit your email for verification!!")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(add)
+
+	// fmt.Fprintf(w, "User inserted, please visit your email for verification!!")
 }

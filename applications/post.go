@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 // swagger:route POST /application Application post-application
@@ -33,17 +33,21 @@ func PostApplication(w http.ResponseWriter, r *http.Request) {
 	var dataToCompare map[string]string
 	json.Unmarshal(dataFromWeb, &dataToCompare)
 
-	app.U_ID = dataToCompare["user_id"]
-	app.Job_ID = dataToCompare["job_id"]
+	app.U_ID = strings.ReplaceAll(dataToCompare["user_id"], `"`, "")
+	app.Job_ID = strings.ReplaceAll(dataToCompare["job_id"], `"`, "")
 	app.Status = dataToCompare["status"]
 
-	validate := validator.New()
-	err := validate.Struct(app)
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, "Incorrect Input")
-		return
-	}
+	fmt.Println(app.U_ID)
+	fmt.Println(app.Job_ID)
+	fmt.Println(app.Status)
+
+	// validate := validator.New()
+	// err := validate.Struct(app)
+	// if err != nil {
+	// 	w.WriteHeader(400)
+	// 	fmt.Fprintf(w, "Incorrect Input")
+	// 	return
+	// }
 
 	// validating json schema
 	schemaLoader := gojsonschema.NewReferenceLoader("file:///app/schemas/ApplicationSchema.json")

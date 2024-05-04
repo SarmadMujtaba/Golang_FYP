@@ -9,4 +9,8 @@ swagger:
 	swagger validate ./swagger.yaml
 
 
-all: linter run
+all: 
+	sudo docker-compose up; \
+	cd ..; \
+	cd PythonService; \
+	uvicorn main:app --reload --host=0.0.0.0;
